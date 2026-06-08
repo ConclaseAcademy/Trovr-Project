@@ -1,4 +1,3 @@
-// AuthModal.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -40,11 +39,11 @@ export default function AuthModal({ type, onClose }) {
       if (response.ok) {
         if (isLogin) {
           localStorage.setItem("token", data.token);
-          onClose();       // close modal
-          navigate("/");   // go to landing page
+          onClose();       
+          navigate("/");   
         } else {
           onClose();
-          navigate("/login"); // after signup go to login
+          navigate("/login"); 
         }
       } else {
         setError(data.message || "Something went wrong");
@@ -95,7 +94,7 @@ export default function AuthModal({ type, onClose }) {
             onChange={handleChange} style={styles.input} />
         </div>
 
-        {/* Error message */}
+        
         {error && <p style={{ color: "red", fontSize: "13px" }}>{error}</p>}
 
         {isLogin && (

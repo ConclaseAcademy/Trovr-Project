@@ -80,7 +80,6 @@ function Marketplace() {
   return (
     <div style={styles.page}>
 
-      {/* Navbar */}
       <nav style={styles.nav}>
         <span style={styles.logo}>Capstone</span>
         <div style={{ display: "flex", gap: "10px" }}>
@@ -90,11 +89,9 @@ function Marketplace() {
         </div>
       </nav>
 
-      {/* Main content */}
       <div style={styles.container}>
         <h2 style={styles.heading}>Discover Items</h2>
 
-        {/* Search + Filter row */}
         <div style={styles.searchRow}>
           <input
             type="text"
@@ -104,7 +101,6 @@ function Marketplace() {
             style={styles.searchInput}
           />
 
-          {/* Categories */}
           <div style={styles.categories}>
             {categories.map((cat) => (
               <button
@@ -122,10 +118,8 @@ function Marketplace() {
           </div>
         </div>
 
-        {/* Results count */}
         <p style={styles.resultCount}>{filtered.length} Items Found</p>
 
-        {/* Product Grid */}
         <div style={styles.grid}>
           {filtered.map((product) => (
             <div key={product.id} style={styles.card}>
@@ -149,7 +143,7 @@ function Marketplace() {
           ))}
         </div>
 
-        {/* CTA Banner */}
+       
         <div style={styles.ctaBanner}>
           <h3 style={styles.ctaTitle}>Ready to become a Seller?</h3>
           <p style={styles.ctaSubtitle}>
@@ -165,7 +159,6 @@ function Marketplace() {
 
       </div>
 
-      {/* Footer */}
       <footer style={styles.footer}>
         <span>© 2024 Capstone. All rights reserved.</span>
         <div style={{ display: "flex", gap: "16px" }}>

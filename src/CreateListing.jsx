@@ -1,4 +1,3 @@
-// CreateListing.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -46,7 +45,6 @@ function CreateListing() {
  return (
    <div style={styles.page}>
 
-     {/* Navbar */}
      <nav style={styles.nav}>
        <span style={styles.logo}>Capstone</span>
        <button style={styles.backBtn} onClick={() => navigate("/dashboard")}>
@@ -60,7 +58,6 @@ function CreateListing() {
 
        <div style={styles.form}>
 
-         {/* 1. Item Name */}
          <label style={styles.label}>Item Name *</label>
          <input
            name="name"
@@ -69,7 +66,6 @@ function CreateListing() {
            style={styles.input}
          />
 
-         {/* 2. Price */}
          <label style={styles.label}>Price (₦) *</label>
          <input
            name="price"
@@ -78,7 +74,6 @@ function CreateListing() {
            style={styles.input}
          />
 
-         {/* 3. Category */}
          <label style={styles.label}>Category *</label>
          <select name="category" onChange={handleChange} style={styles.input}>
            <option value="">Select category</option>
@@ -89,7 +84,6 @@ function CreateListing() {
            <option value="Sport">Sport</option>
          </select>
 
-         {/* 4. Condition */}
          <label style={styles.label}>Condition *</label>
          <select name="condition" onChange={handleChange} style={styles.input}>
            <option value="">Select condition</option>
@@ -97,7 +91,6 @@ function CreateListing() {
            <option value="Used">Used</option>
          </select>
 
-         {/* 5. Description */}
          <label style={styles.label}>Description *</label>
          <textarea
            name="description"
@@ -106,7 +99,6 @@ function CreateListing() {
            style={{ ...styles.input, height: "100px", resize: "vertical" }}
          />
 
-         {/* 6. Location */}
          <label style={styles.label}>Location *</label>
          <input
            name="location"
@@ -115,7 +107,6 @@ function CreateListing() {
            style={styles.input}
          />
 
-         {/* 7. Image URL — GOES HERE after location */}
          <label style={styles.label}>Item Image URL</label>
          <input
            name="image"
@@ -124,7 +115,6 @@ function CreateListing() {
            style={styles.input}
          />
 
-         {/* 8. Image Preview — shows below image input */}
          {form.image && (
            <img
              src={form.image}
@@ -139,14 +129,12 @@ function CreateListing() {
            />
          )}
 
-         {/* 9. Error message */}
          {error && (
            <p style={{ color: "red", fontSize: "13px", marginTop: "10px" }}>
              {error}
            </p>
          )}
 
-         {/* 10. Submit button */}
          <button
            style={styles.submitBtn}
            onClick={handleSubmit}

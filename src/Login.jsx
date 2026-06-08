@@ -64,7 +64,6 @@ function Login() {
           onChange={handleChange}
         />
 
-        {/* Show error message if login fails */}
         {error && <p style={{ color: "red", fontSize: "13px" }}>{error}</p>}
 
         <span

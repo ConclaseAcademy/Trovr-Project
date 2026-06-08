@@ -1,4 +1,3 @@
-// NotFound.jsx
 import { useNavigate } from "react-router-dom";
 
 function NotFound() {

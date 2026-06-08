@@ -1,9 +1,8 @@
-// Navbar.jsx
 import { useState } from "react";
 import AuthModal from "./AuthModal";
 
 function Navbar({ setPage }) {
-  const [modal, setModal] = useState(null); // "login" | "signup" | null
+  const [modal, setModal] = useState(null); 
 
   return (
     <>
@@ -12,13 +11,13 @@ function Navbar({ setPage }) {
         <div style={styles.navBtns}>
           <button
             style={styles.signupBtn}
-            onClick={() => setModal("signup")}  // ← opens modal instead
+            onClick={() => setModal("signup")}  
           >
             Sign-up
           </button>
           <button
             style={styles.loginBtn}
-            onClick={() => setModal("login")}   // ← opens modal instead
+            onClick={() => setModal("login")}   
           >
             Login
           </button>
@@ -29,7 +28,7 @@ function Navbar({ setPage }) {
         <AuthModal
           type={modal}
           onClose={() => setModal(null)}
-          setPage={setPage}   // ← pass setPage down so modal can still navigate
+          setPage={setPage}   
         />
       )}
     </>

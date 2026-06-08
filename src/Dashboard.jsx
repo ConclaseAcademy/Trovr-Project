@@ -1,14 +1,12 @@
-// Dashboard.jsx
 import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const navigate = useNavigate();
-  const listings = []; // will come from backend later
+  const listings = []; 
 
   return (
     <div style={styles.page}>
 
-      {/* Navbar */}
       <nav style={styles.nav}>
         <span style={styles.logo}>Capstone</span>
         <div style={styles.navLinks}>
@@ -28,7 +26,6 @@ function Dashboard() {
         </div>
       </nav>
 
-      {/* Main */}
       <div style={styles.container}>
         <h2 style={styles.heading}>My Listing Dashboard</h2>
         <p style={styles.subtitle}>Manage and update your listings here</p>
@@ -47,12 +44,11 @@ function Dashboard() {
           </div>
         ) : (
           <div>
-            {/* listings will show here later */}
+  
           </div>
         )}
       </div>
 
-      {/* Footer */}
       <footer style={styles.footer}>
         <span>© 2026 Capstone. All rights reserved.</span>
         <div style={{ display: "flex", gap: "16px" }}>

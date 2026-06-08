@@ -1,4 +1,3 @@
-// Hero.jsx
 import { useNavigate } from "react-router-dom";
 
 function Hero() {

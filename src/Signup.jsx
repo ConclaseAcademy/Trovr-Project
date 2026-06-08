@@ -1,4 +1,3 @@
-// Signup.jsx
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -34,7 +33,7 @@ function Signup() {
       const data = await response.json();
 
       if (response.ok) {
-        navigate("/login"); // go to login after success
+        navigate("/login");
       } else {
         setError(data.message || "Signup failed");
       }
@@ -87,7 +86,6 @@ function Signup() {
           onChange={handleChange}
         />
 
-        {/* Show error if signup fails */}
         {error && <p style={{ color: "red", fontSize: "13px" }}>{error}</p>}
 
         <button
