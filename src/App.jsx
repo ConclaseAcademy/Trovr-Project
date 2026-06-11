@@ -7,6 +7,7 @@ import NotFound from "./NotFound";
 import Marketplace from "./Marketplace";
 import Dashboard from "./Dashboard";
 import CreateListing from "./CreateListing";
+import SuccessPage from "./pages/SuccessPage";
 
 function App() {
   return(
@@ -19,6 +20,7 @@ function App() {
          <Route path="/dashboard" element={<Dashboard/> }/>
          <Route path="/create-listing" element={<CreateListing/> }/>
         <Route path="*" element={<NotFound/> }/>
+        <Route path="/success" element={<SuccessPage />} />
     </Routes>
   );
 }

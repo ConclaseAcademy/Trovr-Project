@@ -1,6 +1,16 @@
 const features = [
   {
-    icon: "🛒",
+    icon: "👥",
+    title: "Campus Community",
+    desc: "Trade only with verified students from your university for a safe experience.",
+  },
+  {
+  icon: "💬",
+    title: "Direct Messaging",
+    desc: "Chat directly with sellers to ask questions and arrange meetups safely on campus.",
+  },
+  {
+     icon: "🛒",
     title: "Buy & Sell Easily",
     desc: "List your items in minutes and discover great deals from fellow students on campus.",
   },
@@ -9,25 +19,18 @@ const features = [
     title: "Fast & Simple",
     desc: "No complicated processes. Post, browse, message, and meet up all in one place.",
   },
-  {
-    icon: "💬",
-    title: "Direct Messaging",
-    desc: "Chat directly with sellers to ask questions and arrange meetups safely on campus.",
-  },
-  {
-    icon: "👥",
-    title: "Campus Community",
-    desc: "Trade only with verified students from your university for a safe experience.",
-  },
+       
 ];
+ 
 
+  
 function WhyChoose() {
   return (
     <section style={styles.section}>
       <h2 style={styles.title}>
-        Why <span style={styles.green}>Choose</span><br />Capstone?
+        Why <span style={styles.green}>students trust</span><br /> Trovr?
       </h2>
-      <p style={styles.sub}>Everything you need for seamless student-to-student trading</p>
+     
 
       <div style={styles.grid}>
         {features.map((item, i) => (

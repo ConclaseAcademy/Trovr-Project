@@ -6,24 +6,24 @@ function Hero() {
   return (
     <section style={styles.hero}>
       <h1 style={styles.title}>
-        <span style={styles.green}>Capstone</span> - Campus<br />Marketplace
+        <span style={styles.green}>Trovr</span> 
       </h1>
       <p style={styles.sub}>
-        Your student community for buying and selling textbooks,<br />
-        furniture, electronics, and more
+        The only campus marketplace where every buyer and seller <br />
+        is a verified student.
       </p>
       <div style={styles.btns}>
         <button
           style={styles.browseBtn}
           onClick={() => navigate("/marketplace")}  
         >
-          Browse Marketplace
+          Browse Listing
         </button>
         <button
           style={styles.listBtn}
           onClick={() => navigate("/create-listing")}  
         >
-          List an Item
+          Get started
         </button>
       </div>
     </section>

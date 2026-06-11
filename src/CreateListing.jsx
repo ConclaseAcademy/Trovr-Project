@@ -32,7 +32,7 @@ function CreateListing() {
      });
      const data = await response.json();
      if (response.ok) {
-       navigate("/dashboard");
+       navigate("success");
      } else {
        setError(data.message || "Failed to create listing");
      }
@@ -46,7 +46,7 @@ function CreateListing() {
    <div style={styles.page}>
 
      <nav style={styles.nav}>
-       <span style={styles.logo}>Capstone</span>
+       <span style={styles.logo}>Trovr</span>
        <button style={styles.backBtn} onClick={() => navigate("/dashboard")}>
          ← Back to Dashboard
        </button>

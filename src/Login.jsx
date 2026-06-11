@@ -42,7 +42,7 @@ function Login() {
       <div className="card">
 
         <div className="top">
-          <h3>Capstone</h3>
+          <h3>Trovr</h3>
         </div>
 
         <h1>Login</h1>

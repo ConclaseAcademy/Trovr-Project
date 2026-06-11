@@ -48,7 +48,7 @@ function Signup() {
       <div className="card">
 
         <div className="top">
-          <h3>Capstone</h3>
+          <h3>Trovr</h3>
         </div>
 
         <h1>Sign-up</h1>

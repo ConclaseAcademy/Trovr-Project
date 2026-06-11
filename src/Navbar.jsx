@@ -1,13 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthModal from "./AuthModal";
 
 function Navbar({ setPage }) {
   const [modal, setModal] = useState(null); 
+  const navigate = useNavigate();
 
   return (
     <>
       <nav style={styles.nav}>
-        <span style={styles.logo}>Capstone</span>
+       <span style={styles.logo} onClick={() => navigate("/")} style={{...styles.logo, cursor: "pointer"}}>Trovr</span>
         <div style={styles.navBtns}>
           <button
             style={styles.signupBtn}

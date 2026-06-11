@@ -81,7 +81,7 @@ function Marketplace() {
     <div style={styles.page}>
 
       <nav style={styles.nav}>
-        <span style={styles.logo}>Capstone</span>
+        <span style={styles.logo}>Trovr</span>
         <div style={{ display: "flex", gap: "10px" }}>
           <button style={styles.signupBtn}>Sign-up</button>
           <button style={styles.loginBtn}>Login</button>
@@ -160,7 +160,7 @@ function Marketplace() {
       </div>
 
       <footer style={styles.footer}>
-        <span>© 2024 Capstone. All rights reserved.</span>
+        <span>© 2024 Trovr. All rights reserved.</span>
         <div style={{ display: "flex", gap: "16px" }}>
           <span style={styles.footerLink}>REPORT</span>
           <span style={styles.footerLink}>SAFETY TIPS</span>
