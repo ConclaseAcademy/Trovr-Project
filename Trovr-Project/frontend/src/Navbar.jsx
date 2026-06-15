@@ -9,7 +9,7 @@ function Navbar({ setPage }) {
   return (
     <>
       <nav style={styles.nav}>
-       <span style={styles.logo} onClick={() => navigate("/")} style={{...styles.logo, cursor: "pointer"}}>Trovr</span>
+       <span style={{...styles.logo, cursor: "pointer"}} onClick={() => navigate("/")} >Trovr</span>
         <div style={styles.navBtns}>
           <button
             style={styles.signupBtn}
