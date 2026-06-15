@@ -56,7 +56,7 @@ const styles = {
     objectFit: "cover",
     flexShrink: 0,
     marginRight: "8px",
-    borderRadius:"50%"
+    borderRadius:"12px"
   },
 };
 
