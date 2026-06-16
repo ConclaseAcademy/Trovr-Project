@@ -9,8 +9,10 @@ function Hero() {
         <span style={styles.green}>Trovr</span> 
       </h1>
       <p style={styles.sub}>
-        The only campus marketplace where every buyer and seller <br />
-        is a verified student.
+        For studets who've been ghosted,scammed,and left on read  <br />
+        Trovr is the campus marketplace that finally makes buying <br />
+        and selling feel safe.No strangers.No gambling. <br />
+         Just people who walk the same halls as you.
       </p>
       <div style={styles.btns}>
         <button

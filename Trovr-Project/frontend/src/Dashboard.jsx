@@ -1,8 +1,33 @@
+import { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getMyListings } from "./api";
 
 function Dashboard() {
   const navigate = useNavigate();
-  const listings = []; 
+  const [listings, setListings] = useState([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    navigate("/");
+    return;
+  }
+
+  getMyListings()
+    .then((data) => {
+      setListings(data);
+      setLoading(false);
+    })
+    .catch((err) => {
+      setError(err.message);
+      setLoading(false);
+    });
+}, []);
+
+if (loading) return <p style={{ textAlign: "center", marginTop: 40 }}>Loading...</p>;
+if (error) return <p style={{ textAlign: "center", color: "red" }}>{error}</p>;
 
   return (
     <div style={styles.page}>
