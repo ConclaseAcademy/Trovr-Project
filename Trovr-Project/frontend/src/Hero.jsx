@@ -9,7 +9,7 @@ function Hero() {
         <span style={styles.green}>Trovr</span> 
       </h1>
       <p style={styles.sub}>
-       "No Ghost Buying. No Scam Sellers. <br /> 
+       "No Ghost Buyers. No Scam Sellers. <br /> 
         Just People Who Actually Show Up."
       </p>
       <div style={styles.btns}>
