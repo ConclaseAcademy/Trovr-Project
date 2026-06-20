@@ -8,8 +8,17 @@ import Marketplace from "./Marketplace";
 import Dashboard from "./Dashboard";
 import CreateListing from "./CreateListing";
 import SuccessPage from "./SuccessPage";
+import useStore from "./store";
+ 
+
 
 function App() {
+
+const user =useStore((state) =>
+  state.name)
+console.log(user)
+
+
   return(
     <Routes>
       <Route path="/" element={<LandingPage/> }/>
