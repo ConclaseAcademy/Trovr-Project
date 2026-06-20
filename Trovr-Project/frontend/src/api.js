@@ -1,4 +1,4 @@
-const BASE_URL = "http://104.211.22.120/api";
+const BASE_URL = "https://104.211.22.120/api";
 
 
 const getToken = () => localStorage.getItem("token");
