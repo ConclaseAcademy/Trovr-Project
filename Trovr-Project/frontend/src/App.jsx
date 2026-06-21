@@ -15,8 +15,8 @@ import useStore from "./store";
 function App() {
 
 const user =useStore((state) =>
-  state.name)
-console.log(user)
+  state.user)
+
 
 
   return(

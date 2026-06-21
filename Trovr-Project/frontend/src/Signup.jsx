@@ -23,7 +23,7 @@ function Signup() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: form.name,
+          fullName: form.name,
           contact: form.contact,
           email: form.email,
           password: form.password,
