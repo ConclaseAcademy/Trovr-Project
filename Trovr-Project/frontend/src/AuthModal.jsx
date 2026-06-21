@@ -20,12 +20,12 @@ export default function AuthModal({ type, onClose }) {
     setError("");
 
     const url = isLogin
-      ? "http://localhost:5000/api/auth/login"
-      : "http://localhost:5000/api/auth/register";
+      ? "https://104.211.22.120/api/auth/login"
+      : "https://104.211.22.120/api/auth/register";
 
     const body = isLogin
       ? { email: form.email, password: form.password }
-      : { name: form.name, contact: form.contact, email: form.email, password: form.password };
+      : { fullName: form.name, contact: form.contact, email: form.email, password: form.password };
 
     try {
       const response = await fetch(url, {
