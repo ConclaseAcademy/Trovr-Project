@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getListings } from "./api";
 
 const categories = ["All", "Education", "Sport", "Electronics", "Furniture", "Fashion"];
 
@@ -70,12 +71,33 @@ function Marketplace() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+const [listings, setListings] = useState([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
 
-  const filtered = products.filter((p) => {
-    const matchCategory = activeCategory === "All" || p.category === activeCategory;
-    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
-    return matchCategory && matchSearch;
-  });
+
+useEffect(() => {
+  getListings()
+    .then((data) => {
+      setListings(data);
+      setLoading(false);
+    })
+    .catch((err) => {
+      setError(err.message);
+      setLoading(false);
+    });
+}, []);
+
+
+const filtered = listings.filter((p) => {
+  const matchCategory = activeCategory === "All" || p.category === activeCategory;
+  const matchSearch = p.title.toLowerCase().includes(search.toLowerCase());
+  return matchCategory && matchSearch;
+});
+
+if (loading) return <p style={{ textAlign: "center", marginTop: 40 }}>Loading listings...</p>;
+if (error) return <p style={{ textAlign: "center", color: "red" }}>{error}</p>;
+
 
   return (
     <div style={styles.page}>
@@ -122,11 +144,11 @@ function Marketplace() {
 
         <div style={styles.grid}>
           {filtered.map((product) => (
-            <div key={product.id} style={styles.card}>
-              <img src={product.image} alt={product.name} style={styles.cardImg} />
+            <div key={product._id} style={styles.card}>
+              <img src={product.image?.[0]} alt={product.title} style={styles.cardImg} />
               <div style={styles.cardBody}>
                 <div style={styles.cardTop}>
-                  <span style={styles.cardName}>{product.name}</span>
+                  <span style={styles.cardName}>{product.title}</span>
                   <span style={styles.cardPrice}>{product.price}</span>
                 </div>
                 <span style={{

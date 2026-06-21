@@ -1,25 +1,9 @@
+import {ShieldCheck, UserCheck, LayoutGrid, Smartphone} from "lucide-react";
 const features = [
-  {
-    icon: "👥",
-    title: "Campus Community",
-    desc: "Trade only with verified students from your university for a safe experience.",
-  },
-  {
-  icon: "💬",
-    title: "Direct Messaging",
-    desc: "Chat directly with sellers to ask questions and arrange meetups safely on campus.",
-  },
-  {
-     icon: "🛒",
-    title: "Buy & Sell Easily",
-    desc: "List your items in minutes and discover great deals from fellow students on campus.",
-  },
-  {
-    icon: "⚡",
-    title: "Fast & Simple",
-    desc: "No complicated processes. Post, browse, message, and meet up all in one place.",
-  },
-       
+  { icon: ShieldCheck, title: "Buy & Sell Easily", desc: "Create a safer buying and selling experience for students." },
+  { icon: UserCheck, title: "Trusted", desc: "Verifying students to build trust within the campus community." },
+  { icon: LayoutGrid, title: "Clean Listing", desc: "Providing beautiful, category-sorted, organised listings that are easier to browse than WhatsApp groups." },
+  { icon: Smartphone, title: "Mobile First", desc: "Designing modern, organised listings that are easier to browse for how students naturally use their phones everyday." },
 ];
  
 
@@ -35,7 +19,7 @@ function WhyChoose() {
       <div style={styles.grid}>
         {features.map((item, i) => (
           <div key={i} style={styles.card}>
-            <div style={styles.icon}>{item.icon}</div>
+            <div style={styles.icon}><item.icon size={32}/></div>
             <h3 style={styles.cardTitle}>{item.title}</h3>
             <p style={styles.cardDesc}>{item.desc}</p>
           </div>

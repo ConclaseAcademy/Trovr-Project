@@ -16,7 +16,7 @@ function ForgotPassword() {
     setError("");
     setMessage("");
     try {
-      const response = await fetch("http://localhost:5000/api/auth/forgot-password", {
+      const response = await fetch("https://104.211.22.120/api/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ email: form.email }),

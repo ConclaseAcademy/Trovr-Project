@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
 
 const images = [
-  "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=300&h=200&fit=crop",
-  "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=300&h=200&fit=crop",
-  "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=300&h=200&fit=crop",
-  "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=200&fit=crop",
-  "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=300&h=200&fit=crop",
+  "https://images.unsplash.com/photo-1551232864-3f0890e580d9?w=800&q=80&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1756705533779-105bf34e0722?w=800&q=80&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1669671943625-e20799ee5f42?w=800&q=80&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1614179689702-355944cd0918?w=800&q=80&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1700219212623-77aebb917034?w=800&q=80&fit=crop&auto=format",
+  "https://images.unsplash.com/photo-1729671286475-23506bef1584?w=800&q=80&fit=crop&auto=format",
 ];
 
 function Imagee() {
@@ -51,11 +52,12 @@ const styles = {
     width: "max-content",
   },
   img: {
-    width: "160px",
-    height: "130px",
+    width: "210px",
+    height: "190px",
     objectFit: "cover",
     flexShrink: 0,
     marginRight: "8px",
+    borderRadius:"12px"
   },
 };
 
