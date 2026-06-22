@@ -16,7 +16,7 @@ function EditListing() {
   useEffect(() => {
     const fetchListing = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/listings/${id}`, {
+        const response = await fetch(`https://104.211.22.120/api/listings/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -49,7 +49,7 @@ function EditListing() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch(`http://localhost:5000/api/listings/${id}`, {
+      const response = await fetch(`https://104.211.22.120/api/listings/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

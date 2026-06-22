@@ -20,8 +20,8 @@ export default function AuthModal({ type, onClose }) {
     setError("");
 
     const url = isLogin
-      ? "https://104.211.22.120/api/auth/login"
-      : "https://104.211.22.120/api/auth/register";
+      ? "http://104.211.22.120/api/auth/login"
+      : "http://104.211.22.120/api/auth/register";
 
     const body = isLogin
       ? { email: form.email, password: form.password }
