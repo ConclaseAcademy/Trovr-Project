@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import axios from "axios";
+import useStore from "./store";
 
 function Login() {
   const navigate = useNavigate();
+  const setUser = useStore((state) => state.setUser);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,6 +17,22 @@ function Login() {
       return;
     }
     setLoading(true);
+
+    axios.post("http://104.211.22.120:5000/api/auth/login", { email, password })
+      .then((response) => {
+        setLoading(false);
+        if (response.data.success) {
+          setUser(response.data.user, response.data.token);
+          toast.success("Login successful!");
+          navigate("/dashboard");
+        } else {
+          toast.error(response.data.message || "Login failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        toast.error(error.response?.data?.message || "An error occurred. Please try again.");
+      });
   };
 
   return (
@@ -33,6 +52,7 @@ function Login() {
             School Email Address <span style={styles.required}>*</span>
           </label>
           <input
+            name="email"
             type="email"
             value={email}
             placeholder="Wealth@gmail.com"
@@ -46,6 +66,7 @@ function Login() {
             Password <span style={styles.required}>*</span>
           </label>
           <input
+            name="passsword"
             type="password"
             value={password}
             placeholder="Wealth1010"

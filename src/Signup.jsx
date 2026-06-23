@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 function Signup() {
   const navigate = useNavigate();
@@ -9,38 +11,37 @@ function Signup() {
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSignup = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const response = await fetch("https://104.211.22.120/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          contact: form.contact,
-          email: form.email,
-          password: form.password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        navigate("/login");
-      } else {
-        setError(data.message || "Signup failed");
-      }
-    } catch (err) {
-      setError("Server error, try again later");
+  const handleSignup = () => {
+    if (!form.name || !form.email || !form.password) {
+      toast.error("Please fill in all required fields");
+      return;
     }
-    setLoading(false);
+    setLoading(true);
+
+    axios.post("http://104.211.22.120:5000/api/auth/register", {
+      name: form.name,
+      contact: form.contact,
+      email: form.email,
+      password: form.password,
+    })
+      .then((response) => {
+        setLoading(false);
+        if (response.data.success) {
+          toast.success("Account created! Please log in.");
+          navigate("/login");
+        } else {
+          toast.error(response.data.message || "Signup failed. Please try again.");
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        toast.error(error.response?.data?.message || "An error occurred. Please try again.");
+      });
   };
 
   return (
@@ -104,8 +105,6 @@ function Signup() {
             style={styles.input}
           />
         </div>
-
-        {error && <p style={styles.error}>{error}</p>}
 
         <button
           style={{ ...styles.submitBtn, opacity: loading ? 0.7 : 1 }}
@@ -196,11 +195,6 @@ const styles = {
     fontSize: "14px",
     boxSizing: "border-box",
     outline: "none",
-  },
-  error: {
-    color: "red",
-    fontSize: "13px",
-    marginBottom: "12px",
   },
   submitBtn: {
     width: "100%",
