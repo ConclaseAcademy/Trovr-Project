@@ -1,90 +1,74 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 function Login() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleLogin = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const response = await fetch("https://104.211.22.120/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem("token", data.token); 
-        navigate("/");  
-      } else {
-        setError(data.message || "Login failed"); 
-      }
-    } catch (err) {
-      setError("Server error, try again later");
+  const handleLogin = () => {
+    if (!email || !password) {
+      toast.error("Please fill in all fields");
+      return;
     }
-    setLoading(false);
+    setLoading(true);
   };
 
   return (
-    <div className="container">
-      <div className="card">
+    <div style={styles.container}>
+      <div style={styles.card}>
 
-        <div className="top">
-          <h3>Trovr</h3>
+        <div style={styles.top}>
+          <span style={styles.backBtn} onClick={() => navigate(-1)}>&#8592;</span>
+          <span style={styles.brand}>Trovr</span>
         </div>
 
-        <h1>Login</h1>
-        <p>Enter your details to access and manage your listing</p>
+        <h1 style={styles.title}>Login</h1>
+        <p style={styles.subtitle}>Enter your details to access and manage your listings</p>
 
-        <label>Email Address</label>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email Address"
-          onChange={handleChange}
-        />
+        <div style={styles.fieldGroup}>
+          <label style={styles.label}>
+            School Email Address <span style={styles.required}>*</span>
+          </label>
+          <input
+            type="email"
+            value={email}
+            placeholder="Wealth@gmail.com"
+            onChange={(e) => setEmail(e.target.value)}
+            style={styles.input}
+          />
+        </div>
 
-        <label>Password</label>
-        <input
-          type="password"
-          name="password"
-          placeholder="Wealth1010"
-          onChange={handleChange}
-        />
+        <div style={styles.fieldGroup}>
+          <label style={styles.label}>
+            Password <span style={styles.required}>*</span>
+          </label>
+          <input
+            type="password"
+            value={password}
+            placeholder="Wealth1010"
+            onChange={(e) => setPassword(e.target.value)}
+            style={styles.input}
+          />
+        </div>
 
-        {error && <p style={{ color: "red", fontSize: "13px" }}>{error}</p>}
-
-        <span
-          className="link"
-          onClick={() => navigate("/forgot-password")}
-        >
+        <p style={styles.recover} onClick={() => navigate("/ForgotPassword")}>
           Recover Password
-        </span>
-        <br />
+        </p>
 
         <button
-          className="mainBtn"
+          style={{ ...styles.submitBtn, opacity: loading ? 0.7 : 1 }}
           onClick={handleLogin}
           disabled={loading}
         >
           {loading ? "Logging in..." : "Login"}
         </button>
 
-        <p>
+        <p style={styles.switchText}>
           Got no account yet?{" "}
-          <span className="link" onClick={() => navigate("/signup")}>
+          <span style={styles.switchLink} onClick={() => navigate("/signup")}>
             Sign-up
           </span>
         </p>
@@ -94,7 +78,105 @@ function Login() {
   );
 }
 
+const styles = {
+  container: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "100vh",
+    backgroundColor: "#f5f5f5",
+  },
+  card: {
+    background: "#fff",
+    borderRadius: "16px",
+    padding: "36px 32px",
+    width: "420px",
+    maxWidth: "90vw",
+    boxShadow: "0 24px 60px rgba(0,0,0,0.1)",
+  },
+  top: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginBottom: "24px",
+  },
+  backBtn: {
+    fontSize: "20px",
+    cursor: "pointer",
+    color: "#555",
+    lineHeight: 1,
+  },
+  brand: {
+    fontSize: "20px",
+    fontWeight: "700",
+    color: "#1e3a8a",
+    fontFamily: "Georgia, serif",
+  },
+  title: {
+    fontSize: "28px",
+    fontWeight: "700",
+    marginBottom: "6px",
+    color: "#111",
+    fontFamily: "Georgia, serif",
+  },
+  subtitle: {
+    fontSize: "14px",
+    color: "#666",
+    marginBottom: "24px",
+    lineHeight: "1.5",
+  },
+  fieldGroup: {
+    marginBottom: "16px",
+  },
+  label: {
+    display: "block",
+    fontSize: "12px",
+    color: "#555",
+    marginBottom: "6px",
+    fontWeight: "500",
+  },
+  required: {
+    color: "red",
+  },
+  input: {
+    width: "100%",
+    padding: "12px 14px",
+    borderRadius: "8px",
+    border: "1px solid #e0e0e0",
+    backgroundColor: "#f5f5f5",
+    fontSize: "14px",
+    boxSizing: "border-box",
+    outline: "none",
+  },
+  recover: {
+    color: "#c9a84c",
+    fontSize: "13px",
+    cursor: "pointer",
+    marginBottom: "20px",
+    fontWeight: "500",
+  },
+  submitBtn: {
+    width: "100%",
+    backgroundColor: "#1e3a8a",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+    padding: "13px",
+    fontSize: "15px",
+    fontWeight: "600",
+    cursor: "pointer",
+    marginBottom: "16px",
+  },
+  switchText: {
+    fontSize: "13px",
+    color: "#555",
+  },
+  switchLink: {
+    textDecoration: "underline",
+    cursor: "pointer",
+    color: "#111",
+    fontWeight: "500",
+  },
+};
+
 export default Login;
-
-
-  
