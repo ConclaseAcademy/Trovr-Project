@@ -9,6 +9,7 @@ import Dashboard from "./Dashboard";
 import CreateListing from "./CreateListing";
 import SuccessPage from "./SuccessPage";
 import useStore from "./store";
+import { ToastContainer } from "react-toastify";
  
 
 
@@ -20,7 +21,22 @@ console.log(user)
 
 
   return(
-    <Routes>
+    <>
+      
+      <ToastContainer
+position="top-right"
+autoClose={5000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick={false}
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="light"
+
+/>
+       <Routes>
       <Route path="/" element={<LandingPage/> }/>
        <Route path="/login" element={<Login/> }/>
         <Route path="/signup" element={<Signup/> }/>
@@ -31,6 +47,7 @@ console.log(user)
         <Route path="*" element={<NotFound/> }/>
         <Route path="/success" element={<SuccessPage />} />
     </Routes>
+    </>
   );
 }
 

@@ -46,18 +46,20 @@ const styles = {
   strip: {
     overflow: "hidden",
     width: "100%",
+    padding: "20px 0",
+    backgroundColor: "#f0f4ee",
   },
   track: {
     display: "flex",
     width: "max-content",
   },
   img: {
-    width: "210px",
-    height: "190px",
+    width: "320px",
+    height: "260px",
     objectFit: "cover",
     flexShrink: 0,
-    marginRight: "8px",
-    borderRadius:"12px"
+    marginRight: "14px",
+    borderRadius: "16px",
   },
 };
 

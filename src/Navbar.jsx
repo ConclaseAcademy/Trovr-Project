@@ -1,75 +1,69 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthModal from "./AuthModal";
 
-function Navbar({ setPage }) {
-  const [modal, setModal] = useState(null); 
+function Navbar() {
   const navigate = useNavigate();
 
   return (
-    <>
-      <nav style={styles.nav}>
-       <span style={{...styles.logo, cursor: "pointer"}} onClick={() => navigate("/")} >Trovr</span>
-        <div style={styles.navBtns}>
-          <button
-            style={styles.signupBtn}
-            onClick={() => setModal("signup")}  
-          >
-            Sign-up
-          </button>
-          <button
-            style={styles.loginBtn}
-            onClick={() => setModal("login")}   
-          >
-            Login
-          </button>
-        </div>
-      </nav>
-
-      {modal && (
-        <AuthModal
-          type={modal}
-          onClose={() => setModal(null)}
-          setPage={setPage}   
-        />
-      )}
-    </>
+    <nav style={styles.nav}>
+      <span style={{ ...styles.logo, cursor: "pointer" }} onClick={() => navigate("/")}>
+        Trovr
+      </span>
+      <div style={styles.navBtns}>
+        <button style={styles.signupBtn} onClick={() => navigate("/signup")}>
+          Sign-up
+        </button>
+        <button style={styles.loginBtn} onClick={() => navigate("/login")}>
+          Login
+        </button>
+      </div>
+    </nav>
   );
 }
 
 const styles = {
   nav: {
+    position: "sticky",
+    top: 0,
+    zIndex: 100,
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "16px 24px",
-    backgroundColor: "#f5f5f0",
+    padding: "18px 40px",
+    backgroundColor: "rgba(255,255,255,0.95)",
+    backdropFilter: "blur(10px)",
+    boxShadow: "0 1px 12px rgba(0,0,0,0.08)",
   },
   logo: {
-    color: "#2a5c3f",
-    fontWeight: "bold",
-    fontSize: "18px",
+    color: "#1e3a8a",
+    fontWeight: "800",
+    fontSize: "22px",
+    fontFamily: "Georgia, serif",
+    letterSpacing: "-0.5px",
   },
   navBtns: {
     display: "flex",
-    gap: "10px",
+    gap: "12px",
+    alignItems: "center",
   },
   signupBtn: {
-    padding: "8px 18px",
-    borderRadius: "20px",
-    border: "1px solid #333",
-    background: "white",
+    padding: "9px 22px",
+    borderRadius: "22px",
+    border: "1.5px solid #1e3a8a",
+    background: "transparent",
+    color: "#1e3a8a",
     cursor: "pointer",
     fontSize: "14px",
+    fontWeight: "600",
   },
   loginBtn: {
-    padding: "8px 18px",
-    borderRadius: "20px",
+    padding: "9px 22px",
+    borderRadius: "22px",
     border: "none",
-    background: "#1a1a6e",
+    background: "#1e3a8a",
     color: "white",
     cursor: "pointer",
     fontSize: "14px",
+    fontWeight: "600",
   },
 };
 
