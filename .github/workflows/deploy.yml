@@ -25,8 +25,7 @@ jobs:
       - name: Build and Push Frontend Image
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
+          file: Dockerfile
           push: true
           # Dynamically inserts your username to tag the image
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/trovr-frontend:staging
