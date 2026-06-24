@@ -1,46 +1,46 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 function CreateListing() {
- const navigate = useNavigate();
- const [form, setForm] = useState({
-   name: "",
-   price: "",
-   category: "",
-   condition: "",
-   description: "",
-   location: "",
-   image: "",
- });
- const [loading, setLoading] = useState(false);
- const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    name: "",
+    price: "",
+    category: "",
+    condition: "",
+    description: "",
+    location: "",
+    image: "",
+  });
+  const [loading, setLoading] = useState(false);
 
- const handleChange = (e) =>
-   setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
- const handleSubmit = async () => {
-   setLoading(true);
-   setError("");
-   try {
-     const response = await fetch("http://localhost:5000/api/listings", {
-       method: "POST",
-       headers: {
-         "Content-Type": "application/json",
-         Authorization: `Bearer ${localStorage.getItem("token")}`,
-       },
-       body: JSON.stringify(form),
-     });
-     const data = await response.json();
-     if (response.ok) {
-       navigate("success");
-     } else {
-       setError(data.message || "Failed to create listing");
-     }
-   } catch (err) {
-     setError("Server error, try again later");
-   }
-   setLoading(false);
- };
+  const handleSubmit = () => {
+    if (!form.name || !form.price || !form.category) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    setLoading(true);
+    axios.post("http://104.211.22.120/api/listings", form, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+    .then((response) => {
+      setLoading(false);
+      toast.success("Listing created successfully!");
+      navigate("/success");
+    })
+    .catch((error) => {
+      setLoading(false);
+      toast.error(error.response?.data?.message || "Server error, try again later");
+    });
+  };
 
  return (
    <div style={styles.page}>
@@ -110,7 +110,7 @@ function CreateListing() {
          <label style={styles.label}>Item Image URL</label>
          <input
            name="image"
-           placeholder="Paste image link e.g. https://..."
+           placeholder="Paste image link e.g. http://..."
            onChange={handleChange}
            style={styles.input}
          />

@@ -24,7 +24,7 @@ function Signup() {
     setLoading(true);
 
     axios.post("http://104.211.22.120:5000/api/auth/register", {
-      name: form.name,
+      fullName: form.name,
       contact: form.contact,
       email: form.email,
       password: form.password,
