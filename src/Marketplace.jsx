@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getListings } from "./api";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
+import CtaBanner from "./CtaBanner"; // <-- Clean import here!
+import useStore from "./store";
+
 const categories = ["All", "Education", "Sport", "Electronics", "Furniture", "Fashion"];
 
 const fallbackProducts = [
@@ -36,40 +40,11 @@ const fallbackProducts = [
     category: "Furniture",
     image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=300&h=200&fit=crop",
   },
-  {
-    _id: "4",
-    title: "Organic Chemistry Textbook",
-    price: "N9K",
-    condition: "Used",
-    description: "Second Edition, minimal highlighting. Good condition. Used for CHEM 201.",
-    location: "Ife Main Hostel, Burger Spot, Ite Junction",
-    category: "Education",
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=200&fit=crop",
-  },
-  {
-    _id: "5",
-    title: "Gaming Mouse Logitech G502",
-    price: "N100K",
-    condition: "New",
-    description: "High precision gaming mouse with programmable buttons.",
-    location: "Okonkwo Junction",
-    category: "Electronics",
-    image: "https://images.unsplash.com/photo-1527814050087-3793815479db?w=300&h=200&fit=crop",
-  },
-  {
-    _id: "6",
-    title: "Desk Lamp With USB Port",
-    price: "N36K",
-    condition: "Used",
-    description: "LED desk lamp with adjustable brightness and USB charging port.",
-    location: "Adekunle Hostel, Aisha Road",
-    category: "Furniture",
-    image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=300&h=200&fit=crop",
-  },
 ];
 
 function Marketplace() {
   const navigate = useNavigate();
+  const { user } = useStore();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [listings, setListings] = useState(fallbackProducts);
@@ -84,6 +59,15 @@ function Marketplace() {
         setListings(fallbackProducts);
       });
   }, []);
+
+  const handleMessageSeller = () => {
+    if (user) {
+      navigate("/conversations");
+    } else {
+      const loginBtn = document.querySelector("nav button:last-child");
+      if (loginBtn) loginBtn.click();
+    }
+  };
 
   const filtered = listings.filter((p) => {
     const matchCategory = activeCategory === "All" || p.category === activeCategory;
@@ -112,7 +96,7 @@ function Marketplace() {
               onClick={() => setActiveCategory(cat)}
               style={{
                 ...styles.catBtn,
-                backgroundColor: activeCategory === cat ? "#1e3a8a" : "#f0f0f0",
+                backgroundColor: activeCategory === cat ? "#007bff" : "#f0f0f0",
                 color: activeCategory === cat ? "#fff" : "#333",
               }}
             >
@@ -127,7 +111,7 @@ function Marketplace() {
           {filtered.map((product) => (
             <div key={product._id} style={styles.card}>
               <img
-                src={typeof product.image === "string" ? product.image:product.image?.[0]}
+                src={typeof product.image === "string" ? product.image : product.image?.[0]}
                 alt={product.title || product.name}
                 style={styles.cardImg}
               />
@@ -145,27 +129,23 @@ function Marketplace() {
                 </span>
                 <p style={styles.cardDesc}>{product.description}</p>
                 <p style={styles.cardLocation}>📍 {product.location}</p>
+                
+                <button 
+                  style={styles.msgBtn} 
+                  onClick={handleMessageSeller}
+                >
+                  Message Seller
+                </button>
               </div>
             </div>
           ))}
         </div>
 
-        <div style={styles.ctaBanner}>
-          <h3 style={styles.ctaTitle}>Ready to become a Seller?</h3>
-          <p style={styles.ctaSubtitle}>Join hundreds of students buying and selling on campus</p>
-          <button style={styles.ctaBtn} onClick={() => navigate("/signup")}>
-            Create Account
-          </button>
-        </div>
+        
+        <CtaBanner />
       </div>
 
-      <footer style={styles.footer}>
-        <span>©️ 2024 Trovr. All rights reserved.</span>
-        <div style={{ display: "flex", gap: "16px" }}>
-          <span style={styles.footerLink}>REPORT</span>
-          <span style={styles.footerLink}>SAFETY TIPS</span>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
@@ -187,27 +167,16 @@ const styles = {
     gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
     gap: "16px", marginBottom: "40px",
   },
-  card: { backgroundColor: "#fff", borderRadius: "12px", overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" },
+  card: { backgroundColor: "#fff", borderRadius: "12px", overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", display: "flex", flexDirection: "column" },
   cardImg: { width: "100%", height: "160px", objectFit: "cover" },
-  cardBody: { padding: "12px" },
+  cardBody: { padding: "12px", display: "flex", flexDirection: "column", flexGrow: 1 },
   cardTop: { display: "flex", justifyContent: "space-between", marginBottom: "6px" },
   cardName: { fontWeight: "600", fontSize: "14px" },
-  cardPrice: { fontWeight: "700", color: "#1e3a8a" },
-  conditionBadge: { fontSize: "11px", padding: "2px 8px", borderRadius: "10px", display: "inline-block", marginBottom: "8px" },
-  cardDesc: { fontSize: "12px", color: "#666", marginBottom: "6px" },
-  cardLocation: { fontSize: "11px", color: "#999" },
-  ctaBanner: {
-    backgroundColor: "#fff", borderRadius: "12px",
-    padding: "40px", textAlign: "center",
-    marginBottom: "40px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-  },
-  ctaTitle: { color: "#c9a84c", fontSize: "22px", fontWeight: "700" },
-  ctaSubtitle: { color: "#666", marginBottom: "16px" },
-  ctaBtn: { backgroundColor: "#1e3a8a", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 24px", cursor: "pointer" },
-  footer: { display: "flex", justifyContent: "space-between", padding: "16px 32px", borderTop: "1px solid #eee", fontSize: "12px", color: "#999" },
-  footerLink: { cursor: "pointer" },
+  cardPrice: { fontWeight: "700", color: "#007bff" },
+  conditionBadge: { fontSize: "11px", padding: "2px 8px", borderRadius: "10px", display: "inline-block", marginBottom: "8px", alignSelf: "flex-start" },
+  cardDesc: { fontSize: "12px", color: "#666", marginBottom: "6px", flexGrow: 1 },
+  cardLocation: { fontSize: "11px", color: "#999", marginBottom: "10px" },
+  msgBtn: { width: "100%", padding: "8px", backgroundColor: "#007bff", color: "#fff", border: "none", borderRadius: "6px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }
 };
 
 export default Marketplace;
-
-

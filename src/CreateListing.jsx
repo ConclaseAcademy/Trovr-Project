@@ -15,32 +15,38 @@ function CreateListing() {
     image: "",
   });
   const [loading, setLoading] = useState(false);
+  const [error,setError] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = () => {
-    if (!form.name || !form.price || !form.category) {
-      toast.error("Please fill in all fields");
-      return;
+  if (!form.name || !form.price || !form.category) {
+    toast.error("Please fill in all fields");
+    return;
+  }
+
+  setLoading(true);
+
+  const rawToken = localStorage.getItem("token");
+  const token = rawToken ? rawToken.replaceAll('"', '') : "";
+
+  axios.post("http://104.211.22.120:5000/api/listings", form, {
+    headers: {
+      Authorization: `Bearer ${token}`
     }
-    setLoading(true);
-    axios.post("http://104.211.22.120/api/listings", form, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-    .then((response) => {
-      setLoading(false);
-      toast.success("Listing created successfully!");
-      navigate("/success");
-    })
-    .catch((error) => {
-      setLoading(false);
-      toast.error(error.response?.data?.message || "Server error, try again later");
-    });
-  };
+  })
+  .then((response) => {
+    setLoading(false);
+    toast.success("Listing created successfully!");
+    navigate("/success");
+  })
+  .catch((error) => {
+    setLoading(false);
+    toast.error(error.response?.data?.message || "Server error, try again later");
+  });
+};
 
  return (
    <div style={styles.page}>

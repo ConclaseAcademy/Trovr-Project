@@ -31,11 +31,11 @@ function Navbar() {
 
     axios.post(url, body)
       .then((response) => {
-        toast.success(isLogin ? "Login successful!" : "Account created!");
+        toast.success(isLogin ? "You signed in successfully" : "Account created!");
         setUser(response.data.user);
-        setToken(response.data.token);
+        setToken(response.data.accessToken);
         setShowModal(false);
-        navigate("/marketplace");
+        navigate("/Marketplace");
       })
       .catch((error) => {
         toast.error(error.response?.data?.message || "Something went wrong");
@@ -49,15 +49,23 @@ function Navbar() {
         <div style={styles.navBtns}>
           {user ? (
             <>
-              <button style={styles.loginBtn} onClick={() => navigate("/marketplace")}>Browse Listing</button>
-              <button style={styles.loginBtn} onClick={() => navigate("/dashboard")}>My Listing</button>
-              <button style={styles.signupBtn} onClick={() => navigate("/create-listing")}>Create Listing</button>
-              <button style={styles.loginBtn} onClick={handleLogout}>Logout</button>
+              <button style={styles.textLinkBtn} onClick={() => navigate("/create-listing")}>Create Listing</button>
+              
+              <div style={styles.msgBadgeContainer} onClick={() => navigate("/conversations")}>
+                <span style={styles.textLinkBtn}>Messages</span>
+                <span style={styles.badge}>•</span>
+              </div>
+
+              <div style={styles.avatar} onClick={() => navigate("/dashboard")}>
+                {user.fullName ? user.fullName[0].toUpperCase() : "U"}
+              </div>
+
+              <button style={styles.logoutBtn} onClick={handleLogout}>Logout</button>
             </>
           ) : (
             <>
-              <button style={styles.signupBtn} onClick={() => { setIsLogin(false); setShowModal(true); }}>Sign-up</button>
-              <button style={styles.loginBtn} onClick={() => { setIsLogin(true); setShowModal(true); }}>Login</button>
+              <button style={styles.signupBtn} onClick={() => { setIsLogin(false); setShowModal(true); }}>Sign up</button>
+              <button style={styles.loginBtn} onClick={() => { setIsLogin(true); setShowModal(true); }}>Log in</button>
             </>
           )}
         </div>
@@ -119,17 +127,38 @@ const styles = {
     alignItems: "center", padding: "14px 32px",
     backgroundColor: "#fff", borderBottom: "1px solid #eee",
   },
-  logo: { color: "#2a5c3f", fontWeight: "bold", fontSize: "18px", cursor: "pointer" },
-  navBtns: { display: "flex", gap: "10px", alignItems: "center" },
+  logo: { color: "#333", fontWeight: "bold", fontSize: "18px", cursor: "pointer" },
+  navBtns: { display: "flex", gap: "16px", alignItems: "center" },
+  textLinkBtn: {
+    background: "none", border: "none", color: "#333",
+    fontSize: "14px", fontWeight: "500", cursor: "pointer"
+  },
+  msgBadgeContainer: {
+    display: "flex", alignItems: "center", gap: "4px", cursor: "pointer", position: "relative"
+  },
+  badge: {
+    color: "#ff3b30", fontSize: "20px", lineHeight: "0", marginTop: "-4px"
+  },
+  avatar: {
+    width: "32px", height: "32px", borderRadius: "50%",
+    backgroundColor: "#007bff", color: "#fff", display: "flex",
+    alignItems: "center", justifyContent: "center", fontWeight: "bold",
+    fontSize: "14px", cursor: "pointer"
+  },
   signupBtn: {
     padding: "8px 16px", borderRadius: "20px",
-    border: "1px solid #1e3a8a", backgroundColor: "#fff",
-    color: "#1e3a8a", cursor: "pointer",
+    border: "1px solid #007bff", backgroundColor: "#fff",
+    color: "#007bff", cursor: "pointer", fontSize: "14px"
   },
   loginBtn: {
     padding: "8px 16px", borderRadius: "20px",
-    backgroundColor: "#1e3a8a", color: "#fff",
-    border: "none", cursor: "pointer",
+    backgroundColor: "#007bff", color: "#fff",
+    border: "none", cursor: "pointer", fontSize: "14px"
+  },
+  logoutBtn: {
+    padding: "6px 12px", borderRadius: "6px",
+    backgroundColor: "#f44336", color: "#fff",
+    border: "none", cursor: "pointer", fontSize: "12px"
   },
   overlay: {
     position: "fixed", top: 0, left: 0,
@@ -156,12 +185,12 @@ const styles = {
   },
   submitBtn: {
     width: "100%", padding: "12px",
-    backgroundColor: "#1e3a8a", color: "#fff",
+    backgroundColor: "#007bff", color: "#fff",
     border: "none", borderRadius: "8px",
     fontSize: "15px", cursor: "pointer", marginBottom: "12px",
   },
   toggle: { textAlign: "center", fontSize: "13px", color: "#666" },
-  toggleLink: { color: "#1e3a8a", cursor: "pointer", fontWeight: "600" },
+  toggleLink: { color: "#007bff", cursor: "pointer", fontWeight: "600" },
 };
 
 export default Navbar;
