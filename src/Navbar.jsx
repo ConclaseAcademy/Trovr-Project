@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -7,7 +7,6 @@ import useStore from "./store";
 function Navbar() {
   const navigate = useNavigate();
   const { user, logout, setUser, setToken } = useStore();
-  const [showModal, setShowModal] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({ fullName: "", email: "", password: "" });
 
@@ -32,9 +31,19 @@ function Navbar() {
     axios.post(url, body)
       .then((response) => {
         toast.success(isLogin ? "You signed in successfully" : "Account created!");
-        setUser(response.data.user);
-        setToken(response.data.accessToken);
-        setShowModal(false);
+        
+       
+        const userData = response.data?.user || response.data?.data?.user || response.data;
+        const tokenData = response.data?.accessToken || response.data?.token || response.data?.data?.token;
+
+        if (userData) setUser(userData);
+        if (tokenData) {
+          setToken(tokenData);
+          localStorage.setItem("token", tokenData);
+          localStorage.setItem("accessToken", tokenData);
+        }
+
+        setForm({ fullName: "", email: "", password: "" });
         navigate("/Marketplace");
       })
       .catch((error) => {
@@ -44,8 +53,9 @@ function Navbar() {
 
   return (
     <>
+      
       <nav style={styles.nav}>
-        <span style={styles.logo} onClick={() => navigate("/")}>Trovr</span>
+        <span style={styles.navLogo} onClick={() => navigate("/")}>CapStone</span>
         <div style={styles.navBtns}>
           {user ? (
             <>
@@ -64,17 +74,18 @@ function Navbar() {
             </>
           ) : (
             <>
-              <button style={styles.signupBtn} onClick={() => { setIsLogin(false); setShowModal(true); }}>Sign up</button>
-              <button style={styles.loginBtn} onClick={() => { setIsLogin(true); setShowModal(true); }}>Log in</button>
+              {/* Quick toggle headers built right into the top banner */}
+              <button style={isLogin ? styles.signupBtn : styles.loginBtn} onClick={() => setIsLogin(false)}>Sign up</button>
+              <button style={isLogin ? styles.loginBtn : styles.signupBtn} onClick={() => setIsLogin(true)}>Log in</button>
             </>
           )}
         </div>
       </nav>
 
-      {showModal && (
-        <div style={styles.overlay}>
-          <div style={styles.modal}>
-            <button style={styles.closeBtn} onClick={() => setShowModal(false)}>✕</button>
+      
+      {!user && (
+        <div style={styles.authBlockContainer}>
+          <div style={styles.authCard}>
             <h2 style={styles.title}>{isLogin ? "Login" : "Sign Up"}</h2>
 
             {!isLogin && (
@@ -127,7 +138,7 @@ const styles = {
     alignItems: "center", padding: "14px 32px",
     backgroundColor: "#fff", borderBottom: "1px solid #eee",
   },
-  logo: { color: "#333", fontWeight: "bold", fontSize: "18px", cursor: "pointer" },
+  navLogo: { color: "#333", fontWeight: "bold", fontSize: "18px", cursor: "pointer" },
   navBtns: { display: "flex", gap: "16px", alignItems: "center" },
   textLinkBtn: {
     background: "none", border: "none", color: "#333",
@@ -160,21 +171,22 @@ const styles = {
     backgroundColor: "#f44336", color: "#fff",
     border: "none", cursor: "pointer", fontSize: "12px"
   },
-  overlay: {
-    position: "fixed", top: 0, left: 0,
-    width: "100%", height: "100%",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    display: "flex", justifyContent: "center", alignItems: "center",
-    zIndex: 1000,
+ 
+  authBlockContainer: {
+    width: "100%",
+    display: "flex", 
+    justifyContent: "center", 
+    alignItems: "center",
+    padding: "40px 0"
   },
-  modal: {
-    backgroundColor: "#fff", borderRadius: "12px",
-    padding: "32px", width: "90%", maxWidth: "400px",
-    position: "relative",
-  },
-  closeBtn: {
-    position: "absolute", top: "12px", right: "12px",
-    background: "none", border: "none", fontSize: "18px", cursor: "pointer",
+  authCard: {
+    backgroundColor: "#fff", 
+    borderRadius: "12px",
+    padding: "32px", 
+    width: "90%", 
+    maxWidth: "400px",
+    border: "1px solid #eee",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
   },
   title: { fontSize: "22px", fontWeight: "700", marginBottom: "20px" },
   input: {
