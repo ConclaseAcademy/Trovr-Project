@@ -1,3 +1,17 @@
 node_modules/
 dist/
 .env
+
+# Local environment overrides
+.env.local
+.env.*.local
+
+# Operating System system logs/files
+.DS_Store
+Thumbs.db
+
+# IDE / Code Editor configurations
+.vscode/
+.idea/
+*.suo
+*.ntvs*
