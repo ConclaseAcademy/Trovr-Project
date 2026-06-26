@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { getListings } from "./api";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import CtaBanner from "./CtaBanner"; 
+import CtaBanner from "./CTABanner"; 
 import useStore from "./store";
 
 const categories = ["All", "Education", "Sport", "Electronics", "Furniture", "Fashion"];

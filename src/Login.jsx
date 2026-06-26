@@ -1,5 +1,6 @@
 import { useNavigate,useLocation } from "react-router-dom";
 import { useState } from "react";
+import useStore from "./store"
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -8,7 +9,7 @@ import axios from "axios";
 function Login() {
   const navigate = useNavigate();
   const location =useLocation();
-
+ const {setUser} = useStore();
   const fromPage = location.state?.from || "/dashboard";
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -39,9 +40,10 @@ function Login() {
 
     const payload = response.data?.data || response.data;
     const token = payload?.accessToken || payload?.token || payload.jwt;
-
+    
     if (token) {
       localStorage.setItem('token',token);
+      setUser(payload?.user || payload,token);
     }
 
    if (payload?.refreshToken) {
@@ -58,7 +60,7 @@ function Login() {
     draggable:true,
   });
 
-  navigate('/create-listing');
+  navigate('/dashboard');
 } catch (error) {
   console.error(
     'login error:',
