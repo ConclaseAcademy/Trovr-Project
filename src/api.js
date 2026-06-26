@@ -1,54 +1,52 @@
-const BASE_URL = "http://104.211.22.120:5000/api";
+import axios from "axios";
+
+const API_URL = "http://104.211.22.120:5000/api";
 
 
-const getToken = () => localStorage.getItem("token");
+export const getListings = () => axios.get(`${API_URL}/listings`);
 
-
-
-export async function getListings() {
-  const response = await fetch(`${BASE_URL}/listings`);
-  
-  if (!response.ok) {
-    throw new Error("Failed to fetch listings");
-  }
-
-  const data = await response.json();
-  return data;
-}
-
-
-
-export async function createListing(listingData) {
-  const response = await fetch(`${BASE_URL}/listings`, {
-    method: "POST",
+export const createListing = (listingData) =>
+  axios.post(`${API_URL}/listings`, listingData, {
     headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-    },
-    body: JSON.stringify(listingData),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to create listing");
-  }
-
-  const data = await response.json();
-  return data;
-}
-
-
-
-export async function getMyListings() {
-  const response = await fetch(`${BASE_URL}/listings/my`, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch your listings");
-  }
+export const getListingDetails = (listingId) =>
+  axios.get(`${API_URL}/listings/${listingId}`);
 
-  const data = await response.json();
-  return data;
-}
+export const updateListing = (listingId, listingData) =>
+  axios.patch(`${API_URL}/listings/${listingId}`, listingData, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+
+export const getMyListings = () =>
+  axios.get(`${API_URL}/listings/my`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+
+export const replaceListingImages = (listingId, imageData) =>
+  axios.patch(`${API_URL}/listings/${listingId}/images`, imageData, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+
+
+export const deleteListingImage = (listingId, imageId) =>
+  axios.delete(`${API_URL}/listings/${listingId}/images/${imageId}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+
+export const markAsSold = (listingId) =>
+  axios.patch(`${API_URL}/listings/${listingId}/sold`, {}, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });

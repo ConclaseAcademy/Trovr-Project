@@ -1,39 +1,78 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import useStore from "./store";
+
+
 
 function Login() {
   const navigate = useNavigate();
-  const setUser = useStore((state) => state.setUser);
+  const location =useLocation();
+
+  const fromPage = location.state?.from || "/dashboard";
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-    setLoading(true);
+  const API_BASE_URL = 'http://104.211.22.120:5000';
 
-    axios.post("http://104.211.22.120:5000/api/auth/login", { email, password })
-      .then((response) => {
-        setLoading(false);
-        if (response.data.success) {
-          setUser(response.data.user, response.data.token);
-          toast.success("Login successful!");
-          navigate("/dashboard");
-        } else {
-          toast.error(response.data.message || "Login failed. Please try again.");
-        }
-      })
-      .catch((error) => {
-        setLoading(false);
-        toast.error(error.response?.data?.message || "An error occurred. Please try again.");
-      });
-  };
+  const handleSubmit =async (e) => {
+  e.preventDefault();
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+   const passwordRegex = /^(?=.*[a-z])(?=.*[A-z])(?=.*\d).{8,}$/;
+
+  if(!emailRegex.test(email)) {
+      toast.error('Please enter your email address');
+        return;
+    }
+  
+     if(!passwordRegex.test(password)) {
+      toast.error('Please enter your password');
+        return;
+    }
+  try{
+    const response =await axios.post(`${API_BASE_URL}/api/auth/login`,{
+    email:email.trim(),
+    password,
+    });
+
+    const payload = response.data?.data || response.data;
+    const token = payload?.accessToken || payload?.token || payload.jwt;
+
+    if (token) {
+      localStorage.setItem('token',token);
+    }
+
+   if (payload?.refreshToken) {
+      localStorage.setItem('refreshToken',payload.refreshToken);
+    }
+    
+
+ toast.success('login Successful!',{
+    position:'top-center',
+    autoClose:5000,
+    closeOnclick:false,
+    hideProgressBar:false,
+    pauseOnHover:true,
+    draggable:true,
+  });
+
+  navigate('/create-listing');
+} catch (error) {
+  console.error(
+    'login error:',
+     error.response?.status,
+     error.response.data || error.message
+    );
+  toast.error(
+    error.response?.data?.message || 
+    error.response?.data?.error ||
+    error.response?.data?.errors?.[0] ||
+    'login failed.Please check your details and try again.'
+  );
+}
+};
 
   return (
     <div style={styles.container}>
@@ -81,7 +120,7 @@ function Login() {
 
         <button
           style={{ ...styles.submitBtn, opacity: loading ? 0.7 : 1 }}
-          onClick={handleLogin}
+          onClick={handleSubmit}
           disabled={loading}
         >
           {loading ? "Logging in..." : "Login"}
