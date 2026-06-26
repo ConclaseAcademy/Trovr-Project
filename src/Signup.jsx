@@ -5,44 +5,74 @@ import axios from "axios";
 
 function Signup() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    name: "",
-    contact: "",
-    email: "",
-    password: "",
-  });
-  const [loading, setLoading] = useState(false);
+ 
+const [loading, setLoading] = useState(false);
+const [name,setName] = useState("")
+const [contact,setContact] = useState("")
+const [email,setEmail] = useState("")
+const [password,setPassword] =useState("")
+ 
+const API_BASE_URL = 'http://104.211.22.120:5000';
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSignup = () => {
-    if (!form.name || !form.email || !form.password) {
-      toast.error("Please fill in all required fields");
+const handleSubmit =async (e) => {
+  e.preventDefault();
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-z])(?=.*\d).{8,}$/;
+  
+  if(!name.trim()) {
+    toast.error('Please enter your full name');
       return;
-    }
-    setLoading(true);
+  }
 
-    axios.post("http://104.211.22.120:5000/api/auth/register", {
-      name: form.name,
-      contact: form.contact,
-      email: form.email,
-      password: form.password,
-    })
-      .then((response) => {
-        setLoading(false);
-        if (response.data.success) {
-          toast.success("Account created! Please log in.");
-          navigate("/login");
-        } else {
-          toast.error(response.data.message || "Signup failed. Please try again.");
-        }
-      })
-      .catch((error) => {
-        setLoading(false);
-        toast.error(error.response?.data?.message || "An error occurred. Please try again.");
-      });
+ if(!contact.trim()) {
+    toast.error('Please enter your contact number');
+      return;
+  }
+
+   if(!emailRegex.test(email)) {
+    toast.error('Please enter your email address');
+      return;
+  }
+
+   if(!passwordRegex.test(password)) {
+    toast.error('Please enter your password password must contain uppercase,lolwercase and a number');
+      return;
+  }
+ try{
+  const payload ={
+    fullName:name.trim(),
+    contact:contact.trim(),
+    email:email.trim(),
+    password,
+    role:'STUDENT'
   };
+ 
+  await axios.post(`${API_BASE_URL}/api/auth/register`,payload);
+
+  toast.success('Signin Successful!',{
+    position:'top-center',
+    autoClose:5000,
+    closeOnclick:false,
+    hideProgressBar:false,
+    pauseOnHover:true,
+    draggable:true,
+    progress:undefined,
+    theme:'light',
+  });
+
+  navigate('/login');
+} catch (error) {
+  console.error('Signup error:', error.response?.status,error.response.data || error.message);
+  toast.error(
+    error.response?.data?.message || 
+    error.response?.data?.error ||
+    'Sigup failed.Please check your details and try again.'
+  );
+}
+};
+
 
   return (
     <div style={styles.container}>
@@ -60,11 +90,13 @@ function Signup() {
           <label style={styles.label}>
             Full Name <span style={styles.required}>*</span>
           </label>
+
           <input
             type="text"
             name="name"
+            value={name}
             placeholder="Wealth Happiness"
-            onChange={handleChange}
+            onChange={(e)=>setName(e.target.value)}
             style={styles.input}
           />
         </div>
@@ -74,8 +106,9 @@ function Signup() {
           <input
             type="text"
             name="contact"
+            value={contact}
             placeholder="09134671010"
-            onChange={handleChange}
+            onChange={(e)=> setContact(e.target.value)}
             style={styles.input}
           />
         </div>
@@ -87,8 +120,9 @@ function Signup() {
           <input
             type="email"
             name="email"
+            value={email}
             placeholder="Wealth@gmail.com"
-            onChange={handleChange}
+            onChange={(e)=> setEmail(e.target.value)}
             style={styles.input}
           />
         </div>
@@ -100,15 +134,16 @@ function Signup() {
           <input
             type="password"
             name="password"
+            value={password}
             placeholder="Wealth1010"
-            onChange={handleChange}
+            onChange={(e)=> setPassword(e.target.value)}
             style={styles.input}
           />
         </div>
 
         <button
           style={{ ...styles.submitBtn, opacity: loading ? 0.7 : 1 }}
-          onClick={handleSignup}
+          onClick={handleSubmit}    
           disabled={loading}
         >
           {loading ? "Creating account..." : "Sign up"}
