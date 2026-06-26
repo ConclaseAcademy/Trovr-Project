@@ -34,23 +34,19 @@ const rowStyle = {
 function CreateListing({ listingToEdit }) {
   const navigate = useNavigate();
 
-  const [name, setName] = useState('');
+  const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('');
-  const [condition, setCondition] = useState('');
   const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('');
   const [image, setImage] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (listingToEdit) {
-      setName(listingToEdit.name || '');
+      setTitle(listingToEdit.title || '');
       setPrice(listingToEdit.price || '');
       setCategory(listingToEdit.category || '');
-      setCondition(listingToEdit.condition || '');
       setDescription(listingToEdit.description || '');
-      setLocation(listingToEdit.location || '');
       setImage(listingToEdit.image || '');
     }
   }, [listingToEdit]);
@@ -70,14 +66,11 @@ function CreateListing({ listingToEdit }) {
     }
 
     const payload = {
-      id: listingToEdit?.id || Date.now(),
-      name,
-      price,
+      title:title,
+      price:Number(price),
       category,
-      condition,
       description,
-      location,
-      image
+      images:image ? [image] : [],
     };
 
     try {
@@ -126,7 +119,7 @@ function CreateListing({ listingToEdit }) {
           <form onSubmit={handleSubmit}>
             <div>
               <label style={labelStyle}>Item Name *</label>
-              <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Organic Chemistry Textbook" style={inputStyle} required />
+              <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Organic Chemistry Textbook" style={inputStyle} required />
             </div>
 
             <div>
@@ -147,14 +140,7 @@ function CreateListing({ listingToEdit }) {
                 </select>
               </div>
 
-              <div>
-                <label style={labelStyle}>Condition *</label>
-                <select value={condition} onChange={e => setCondition(e.target.value)} style={inputStyle} required>
-                  <option value="">Select Condition</option>
-                  <option value="New">New</option>
-                  <option value="Used">Used</option>
-                </select>
-              </div>
+            
             </div>
 
             <div>
@@ -169,11 +155,7 @@ function CreateListing({ listingToEdit }) {
               />
             </div>
 
-            <div>
-              <label style={labelStyle}>Location *</label>
-              <input value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. Ife Main Hostel, Burger Spot" style={inputStyle} required />
-            </div>
-
+          
             <div>
               <label style={labelStyle}>Item Image URL</label>
               <input value={image} onChange={e => setImage(e.target.value)} placeholder="Paste image link e.g. http://..." style={inputStyle} />
