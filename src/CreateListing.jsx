@@ -47,7 +47,7 @@ function CreateListing({ listingToEdit }) {
       setPrice(listingToEdit.price || '');
       setCategory(listingToEdit.category || '');
       setDescription(listingToEdit.description || '');
-      setImage(listingToEdit.image || '');
+      setImage(listingToEdit.image?.[0] || '');
     }
   }, [listingToEdit]);
 
@@ -79,6 +79,7 @@ function CreateListing({ listingToEdit }) {
     };
 
     try {
+      setLoading(true);
       await createListing(payload);
 
       toast.success('Listing Created Successfully!', {

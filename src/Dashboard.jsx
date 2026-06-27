@@ -11,24 +11,16 @@ function Dashboard() {
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/");
-      return;
-    }
-
-    setLoading(true);
-    getMyListings()
-      .then((res) => {
-        setListings(res.data?.data || res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  }, []);
+  
+  useEffect(()=>{
+     getMyListings().then((response)=>{
+      setListings(response.data.data.items)
+      console.log(response)
+     }).catch((error)=>{
+      toast.error(error.data.messgae || "unable to load your listing")
+      console.log(error)
+     })
+     },[])
 
   if (loading) return <p style={{ textAlign: "center", marginTop: 40, fontFamily: "Poppins, sans-serif" }}>Loading...</p>;
  if (error) return (
