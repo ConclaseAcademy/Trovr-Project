@@ -19,7 +19,7 @@ const handleSubmit =async (e) => {
   e.preventDefault();
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-z])(?=.*\d).{8,}$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
   
   if(!name.trim()) {
     toast.error('Please enter your full name');

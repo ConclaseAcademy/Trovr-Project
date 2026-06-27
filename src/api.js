@@ -23,12 +23,13 @@ export const updateListing = (listingId, listingData) =>
   });
 
 export const getMyListings = () =>
-  axios.get(`${API_URL}/listings/my`, {
+{console.log("Token being sent:",localStorage.getItem('token'));
+ return axios.get(`${API_URL}/listings/my`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`
     },
   });
-
+};
 export const replaceListingImages = (listingId, imageData) =>
   axios.patch(`${API_URL}/listings/${listingId}/images`, imageData, {
     headers: {

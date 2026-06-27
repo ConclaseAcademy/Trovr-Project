@@ -65,6 +65,11 @@ function CreateListing({ listingToEdit }) {
       return;
     }
 
+  if(!image) {
+    toast.error('Please add an image URL');
+    return;
+  }
+
     const payload = {
       title:title,
       price:Number(price),
@@ -97,7 +102,6 @@ function CreateListing({ listingToEdit }) {
 
   return (
     <div style={{ backgroundColor: "#f9f9f9", minHeight: "100vh", fontFamily: "Poppins, sans-serif" }}>
-      {/* Navbar */}
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 32px", backgroundColor: "#fff", borderBottom: "1px solid #eee" }}>
         <span style={{ color: "#1e3a8a", fontWeight: "bold", fontSize: "18px" }}>Trovr</span>
         <button 
@@ -108,7 +112,6 @@ function CreateListing({ listingToEdit }) {
         </button>
       </nav>
 
-      {/* Form Container */}
       <div style={{ maxWidth: "600px", margin: "0 auto", padding: "32px 16px" }}>
         <h2 style={{ fontSize: "24px", fontWeight: "800", color: "#1e3a8a", marginBottom: "4px" }}>
           {listingToEdit ? 'Edit Listing' : 'Create a Listing'}

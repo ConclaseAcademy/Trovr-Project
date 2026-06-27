@@ -21,7 +21,7 @@ function Login() {
   e.preventDefault();
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-   const passwordRegex = /^(?=.*[a-z])(?=.*[A-z])(?=.*\d).{8,}$/;
+   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
   if(!emailRegex.test(email)) {
       toast.error('Please enter your email address');
@@ -29,7 +29,7 @@ function Login() {
     }
   
      if(!passwordRegex.test(password)) {
-      toast.error('Please enter your password');
+      toast.error('Invalid password format');
         return;
     }
   try{
@@ -60,7 +60,7 @@ function Login() {
     draggable:true,
   });
 
-  navigate('/dashboard');
+  navigate('/Marketplace');
 } catch (error) {
   console.error(
     'login error:',
