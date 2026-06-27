@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { forgotPassword} from "./api"
 import { useNavigate } from "react-router-dom";
 
 function ForgotPassword() {
@@ -12,28 +13,19 @@ function ForgotPassword() {
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleForgot = async () => {
-    setLoading(true);
-    setError("");
-    setMessage("");
-    try {
-      const response = await fetch("https://104.211.22.120/api/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-type": "application/json" },
-        body: JSON.stringify({ email: form.email }),
-      });
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage("Check your email for a reset link!");
-      } else {
-        setError(data.message || "Something went wrong");
-      }
-    } catch (err) {
-      setError("Server error, try again later");
-    }
+  setLoading(true);
+  setError("");
+  setMessage("");
+  try {
+    const response = await forgotPassword(form.email);
+    setMessage(response.data?.message || "Reset link sent! Check your email.");
+  } catch (error) {
+    setError(error.response?.data?.message || "Something went wrong.");
+  } finally {
     setLoading(false);
-  };
-
+  }
+};
+      
   return (
     <div className="container">
       <div className="card">
