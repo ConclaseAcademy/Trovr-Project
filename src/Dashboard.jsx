@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyListings } from "./api";
+import { getMyListings, deleteListing } from "./api";
 import { toast } from "react-toastify";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -12,35 +12,38 @@ function Dashboard() {
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  
-  useEffect(()=>{
-     getMyListings().then((response)=>{
-      setListings(response.data.data.items)
-      console.log(response)
-     }).catch((error)=>{
-      const errorMsg = error?.response?.data?.message || "unable to load your listing";
-      toast.error(errorMsg);
-      console.log(error);
-     });
-     },[])
+  useEffect(() => {
+    getMyListings()
+      .then((response) => {
+        setListings(response.data.data);
+        console.log(response);
+      })
+      .catch((error) => {
+        const errorMsg = error?.response?.data?.message || "Unable to load your listings";
+        toast.error(errorMsg);
+        console.log(error);
+      });
+  }, []);
 
   if (loading) return <p style={{ textAlign: "center", marginTop: 40, fontFamily: "Poppins, sans-serif" }}>Loading...</p>;
- if (error) return (
-  <div style={{ backgroundColor: "#f9f9f9", minHeight: "100vh", fontFamily: "Poppins, sans-serif" }}>
-    <Navbar />
-    <div style={{ textAlign: "center", padding: "80px 20px" }}>
-      <p style={{ fontSize: "16px", color: "#555" }}>Unable to load listings right now.</p>
-      <p style={{ fontSize: "13px", color: "#999" }}>Please try again later.</p>
-      <button
-        onClick={() => navigate("/create-listing")}
-        style={{ backgroundColor: "#1e3a8a", color: "#fff", border: "none", borderRadius: "8px", padding: "12px 24px", fontSize: "14px", fontWeight: "600", cursor: "pointer", marginTop: "16px" }}
-      >
-        Create a Listing
-      </button>
+
+  if (error) return (
+    <div style={{ backgroundColor: "#f9f9f9", minHeight: "100vh", fontFamily: "Poppins, sans-serif" }}>
+      <Navbar />
+      <div style={{ textAlign: "center", padding: "80px 20px" }}>
+        <p style={{ fontSize: "16px", color: "#555" }}>Unable to load listings right now.</p>
+        <p style={{ fontSize: "13px", color: "#999" }}>Please try again later.</p>
+        <button
+          onClick={() => navigate("/create-listing")}
+          style={{ backgroundColor: "#1e3a8a", color: "#fff", border: "none", borderRadius: "8px", padding: "12px 24px", fontSize: "14px", fontWeight: "600", cursor: "pointer", marginTop: "16px" }}
+        >
+          Create a Listing
+        </button>
+      </div>
+      <Footer />
     </div>
-    <Footer />
-  </div>
-);
+  );
+
   return (
     <div style={{ backgroundColor: "#f9f9f9", minHeight: "100vh", fontFamily: "Poppins, sans-serif", display: "flex", flexDirection: "column" }}>
       <Navbar />
@@ -53,7 +56,7 @@ function Dashboard() {
 
         {listings.length === 0 ? (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 20px", textAlign: "center" }}>
-            <div style={{ fontSize: "48px", marginBottom: "16px", opacity: 0.4 }}>🗂️</div>
+            <div style={{ fontSize: "48px", marginBottom: "16px", opacity: 0.4 }}>🗂</div>
             <p style={{ fontSize: "16px", fontWeight: "600", color: "#555", margin: 0 }}>No listing created yet</p>
             <p style={{ fontSize: "13px", color: "#999", marginBottom: "20px" }}>Create your first listing to get started</p>
             <button
@@ -67,12 +70,12 @@ function Dashboard() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "20px" }}>
             {listings.map((item) => (
               <div
-                key={item._id || item.id}
+                key={item.id}
                 onClick={() => setSelectedItem(item)}
                 style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: "12px", overflow: "hidden", boxShadow: "0 4px 12px rgba(0,0,0,0.05)", cursor: "pointer" }}
               >
                 <img
-                  src={item.images?.[0] || item.image || "https://via.placeholder.com/150"}
+                  src={item.images?.[0]?.imageUrl || "https://via.placeholder.com/300"}
                   alt={item.title}
                   style={{ width: "100%", height: "150px", objectFit: "cover" }}
                 />
@@ -104,7 +107,7 @@ function Dashboard() {
             </div>
 
             <img
-              src={selectedItem.images?.[0] || selectedItem.image || "https://via.placeholder.com/300"}
+              src={selectedItem.images?.[0]?.imageUrl || "https://via.placeholder.com/300"}
               alt={selectedItem.title}
               style={{ width: "100%", height: "200px", objectFit: "cover" }}
             />
@@ -127,6 +130,20 @@ function Dashboard() {
                     style={{ backgroundColor: "#1e3a8a", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
                   >
                     Edit
+                  </button>
+                  <button
+                    onClick={() => {
+                      deleteListing(selectedItem.id)
+                        .then(() => {
+                          toast.success("Listing deleted");
+                          setListings(listings.filter(l => l.id !== selectedItem.id));
+                          setSelectedItem(null);
+                        })
+                        .catch(() => toast.error("Failed to delete listing"));
+                    }}
+                    style={{ backgroundColor: "#ef4444", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+                  >
+                    Delete
                   </button>
                   <button
                     onClick={() => setSelectedItem(null)}
