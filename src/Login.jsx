@@ -1,6 +1,7 @@
 import { useNavigate,useLocation } from "react-router-dom";
 import { useState } from "react";
 import useStore from "./store"
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -14,6 +15,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const API_BASE_URL = 'http://104.211.22.120:5000';
 
@@ -76,6 +78,11 @@ function Login() {
 }
 };
 
+const hidePws = () => {
+
+setShowPassword(showPassword==true?false:true);
+}
+
   return (
     <div style={styles.container}>
       <div style={styles.card}>
@@ -102,18 +109,44 @@ function Login() {
           />
         </div>
 
-        <div style={styles.fieldGroup}>
+        <div style={{ ...styles.fieldGroup, position: 'relative' }}>
           <label style={styles.label}>
             Password <span style={styles.required}>*</span>
           </label>
           <input
-            name="passsword"
-            type="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
             value={password}
             placeholder="Wealth1010"
             onChange={(e) => setPassword(e.target.value)}
             style={styles.input}
           />
+
+          {showPassword ? (
+                <FiEye 
+             style={{
+              position: 'absolute',
+             right: '20px',
+              fontSize: '22px',
+              color:'#9ca3af',
+              cursor: 'pointer',
+               }}
+                
+                onClick={() => setShowPassword(false)}
+                 />
+               ) : (
+               <FiEyeOff
+              style={{
+                position: 'absolute',
+               right: '20px',
+               fontSize: '22px',
+                 color:'#9ca3af',
+                 cursor: 'pointer',
+              }}
+             onClick={() => setShowPassword(true)}
+            />
+        )}
+       
         </div>
 
         <p style={styles.recover} onClick={() => navigate("/ForgotPassword")}>
@@ -134,9 +167,9 @@ function Login() {
             Sign-up
           </span>
         </p>
-
       </div>
-    </div>
+      </div>
+    
   );
 }
 
