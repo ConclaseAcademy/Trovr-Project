@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMyListings } from "./api";
+import { toast } from "react-toastify";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
@@ -17,9 +18,10 @@ function Dashboard() {
       setListings(response.data.data.items)
       console.log(response)
      }).catch((error)=>{
-      toast.error(error.data.messgae || "unable to load your listing")
-      console.log(error)
-     })
+      const errorMsg = error?.response?.data?.message || "unable to load your listing";
+      toast.error(errorMsg);
+      console.log(error);
+     });
      },[])
 
   if (loading) return <p style={{ textAlign: "center", marginTop: 40, fontFamily: "Poppins, sans-serif" }}>Loading...</p>;
