@@ -5,12 +5,22 @@ const API_URL = "http://104.211.22.120:5000/api";
 
 export const getListings = () => axios.get(`${API_URL}/listings`);
 
-export const createListing = (listingData) =>
-  axios.post(`${API_URL}/listings`, listingData, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
+export const createListing = async (formData) => {
+  const token = localStorage.getItem("token");
+ console.log("token:",token)
+  const response = await axios.post(
+    `${API_URL}/listings`, 
+    formData,             
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+       
+      },
+    }
+  );
+
+  return response.data;
+};
 
 export const getListingDetails = (listingId) =>
   axios.get(`${API_URL}/listings/${listingId}`, {
@@ -27,13 +37,11 @@ export const updateListing = (listingId, listingData) =>
   });
 
 export const getMyListings = () => {
-const token = localStorage.getItem('token');
- return axios.get(`${API_URL}/listings/my`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`
-    },
-  });
+ return axios.get(
+  `${API_URL}/listings/my`
+);
 };
+
 export const replaceListingImages = (listingId, imageData) =>
   axios.patch(`${API_URL}/listings/${listingId}/images`, imageData, {
     headers: {
