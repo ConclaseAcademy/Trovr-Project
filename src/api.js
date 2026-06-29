@@ -38,8 +38,11 @@ export const updateListing = (listingId, listingData) =>
 
 export const getMyListings = () => {
  return axios.get(
-  `${API_URL}/listings/my`
-);
+  `${API_URL}/listings/my`,{
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    }
+  });
 };
 
 export const replaceListingImages = (listingId, imageData) =>
@@ -50,8 +53,8 @@ export const replaceListingImages = (listingId, imageData) =>
   });
 
 
-export const deleteListingImage = (listingId, imageId) =>
-  axios.delete(`${API_URL}/listings/${listingId}/images/${imageId}`, {
+export const deleteListing = (listingId) =>
+  axios.delete(`${API_URL}/listings/${listingId}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },

@@ -1,93 +1,48 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { getInbox, getMessages, sendMessage } from './api';
 import { toast } from 'react-toastify';
+import Navbar from './Navbar';
+import Footer from './Footer';
+import useStore from './store';
 
-const BACKEND_BASE_URL = "http://104.211.22.120:5000";
-
-const inputStyle = {
-  flexGrow: 1,
-  padding: '10px 14px',
-  borderRadius: '24px',
-  border: '1px solid #e0e0e0',
-  backgroundColor: '#f9f9f9',
-  outline: 'none',
-  fontSize: '13px',
-  fontFamily: 'Poppins, sans-serif'
-};
-
-const avatarStyle = {
-  width: '36px',
-  height: '36px',
-  borderRadius: '50%',
-  backgroundColor: '#f4c430',
-  flexShrink: 0
-};
-
-const topHeaderStyle = {
-  padding: '12px',
-  borderBottom: '1px solid #eee',
-  backgroundColor: '#fff'
-};
-
-function Conversations({ currentUserId }) {
+function Conversations() {
   const navigate = useNavigate();
+  const { user } = useStore();
   const chatWindowRef = useRef(null);
-
   const [inbox, setInbox] = useState([]);
-  const [activeConversationId, setActiveConversationId] = useState(null);
+  const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [activeListing, setActiveListing] = useState(null);
-  
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (!token) {
-      if (!toast.isActive("login-warning")) {
-        toast.error("You need to login to view your conversations.", {
-          toastId: "login-warning",
-        });
-      }
-      setTimeout(() => {
-        navigate("/login");
-      }, 100);
+      toast.error("You need to login to view conversations.");
+      navigate("/login");
       return;
     }
-    setIsCheckingAuth(false);
-  }, [navigate]);
+    getInbox()
+      .then((response) => {
+        setInbox(response.data.data);
+      })
+      .catch((error) => {
+        const errorMsg = error?.response?.data?.message || "Failed to load inbox";
+        toast.error(errorMsg);
+      });
+  }, []);
 
   useEffect(() => {
-    if (isCheckingAuth) return;
-
-    const fetchInbox = async () => {
-      try {
-        const response = await axios.get(`${BACKEND_BASE_URL}/api/conversations/inbox`);
-        setInbox(response.data);
-      } catch (error) {
-        console.error("Error fetching inbox data:", error.message);
-      }
-    };
-
-    fetchInbox();
-  }, [activeConversationId, isCheckingAuth]);
-
-  useEffect(() => {
-    if (!activeConversationId || isCheckingAuth) return;
-
-    const fetchMessages = async () => {
-      try {
-        const response = await axios.get(`${BACKEND_BASE_URL}/conversations/${activeConversationId}/messages`);
-        setMessages(response.data);
-      } catch (error) {
-        console.error("Error fetching chat messages:", error.message);
-      }
-    };
-
-    fetchMessages();
-  }, [activeConversationId, isCheckingAuth]);
+    if (!activeConversation) return;
+    getMessages(activeConversation.id)
+      .then((response) => {
+        setMessages(response.data.data);
+      })
+      .catch((error) => {
+        const errorMsg = error?.response?.data?.message || "Failed to load messages";
+        toast.error(errorMsg);
+      });
+  }, [activeConversation]);
 
   useEffect(() => {
     if (chatWindowRef.current) {
@@ -95,154 +50,105 @@ function Conversations({ currentUserId }) {
     }
   }, [messages]);
 
-  const handleSelectConversation = (item) => {
-    setActiveConversationId(item._id || item.id);
-    setActiveListing(item.listing); 
-  };
-
-  const handleSendMessage = async (e) => {
+  const handleSendMessage = (e) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
-
-    const payload = { text: newMessage.trim() };
-
-    try {
-      const response = await axios.post(`${BACKEND_BASE_URL}/conversations/${activeConversationId}/messages`, payload);
-      setMessages([...messages, response.data]);
-      setNewMessage('');
-    } catch (error) {
-      console.error("Error sending message:", error.message);
-      toast.error("Failed to deliver message. Try again later.");
-    }
+    sendMessage(activeConversation.id, { body: newMessage.trim() })
+      .then((response) => {
+        setMessages([...messages, response.data.data]);
+        setNewMessage('');
+      })
+      .catch(() => toast.error("Failed to send message"));
   };
 
-  if (isCheckingAuth) return null;
-
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        
-        {!activeConversationId ? (
+    <div style={{ backgroundColor: "#f9f9f9", minHeight: "100vh", fontFamily: "Poppins, sans-serif", display: "flex", flexDirection: "column" }}>
+      <Navbar />
+      <div style={{ flex: 1, maxWidth: "800px", margin: "0 auto", padding: "32px 16px", width: "100%", boxSizing: "border-box" }}>
+
+        {!activeConversation ? (
           <div>
-            <div style={topHeaderStyle}>
-              <h3 style={{ margin: 0, fontSize: '18px', color: '#333', fontWeight: '700' }}>Messages</h3>
-            </div>
-            <div style={styles.listContainer}>
-              {inbox.map((item) => (
-                <InboxItem 
-                  key={item._id || item.id} 
-                  item={item} 
-                  onSelect={handleSelectConversation} 
-                />
-              ))}
-            </div>
+            <h2 style={{ fontSize: "24px", fontWeight: "800", color: "#1e3a8a", marginBottom: "24px" }}>Messages</h2>
+            {inbox.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "80px 20px" }}>
+                <div style={{ fontSize: "48px", marginBottom: "16px", opacity: 0.4 }}>💬</div>
+                <p style={{ fontSize: "16px", fontWeight: "600", color: "#555" }}>No conversations yet</p>
+                <p style={{ fontSize: "13px", color: "#999" }}>Message a seller from the browse page to get started</p>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                {inbox.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => setActiveConversation(item)}
+                    style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: "12px", padding: "16px", display: "flex", alignItems: "center", gap: "12px", cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+                  >
+                    <div style={{ width: "40px", height: "40px", borderRadius: "50%", backgroundColor: "#1e3a8a", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", fontSize: "16px", flexShrink: 0 }}>
+                      {item.otherUser?.name?.[0]?.toUpperCase() || "S"}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ margin: 0, fontWeight: "600", fontSize: "14px", color: "#333" }}>{item.otherUser?.name || "Seller"}</p>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>{item.listing?.title || "Listing"}</p>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#888", marginTop: "4px" }}>{item.lastMessage?.body || "Click to view chat"}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
-      
-          <div style={styles.chatViewContainer}>
-            <div style={topHeaderStyle}>
-              <div style={styles.sellerHeader}>
-                <button onClick={() => setActiveConversationId(null)} style={styles.backBtn}>←</button>
-                <div style={avatarStyle}></div>
-                <div>
-                  <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#333' }}>{activeListing?.sellerName || "Wealth Happiness"}</div>
-                  <div style={{ fontSize: '11px', color: '#777' }}>Seller • {activeListing?.title || "Organic Chemistry Textbook"}</div>
-                </div>
+          <div style={{ backgroundColor: "#fff", borderRadius: "16px", overflow: "hidden", boxShadow: "0 4px 16px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", height: "600px" }}>
+            <div style={{ padding: "16px", borderBottom: "1px solid #eee", display: "flex", alignItems: "center", gap: "12px" }}>
+              <button
+                onClick={() => { setActiveConversation(null); setMessages([]); }}
+                style={{ background: "none", border: "none", fontSize: "18px", cursor: "pointer", color: "#333" }}
+              >←</button>
+              <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "#1e3a8a", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold" }}>
+                {activeConversation.otherUser?.name?.[0]?.toUpperCase() || "S"}
               </div>
-              
-              <ProductCard listing={activeListing} />
+              <div>
+                <p style={{ margin: 0, fontWeight: "600", fontSize: "14px", color: "#333" }}>{activeConversation.otherUser?.name || "Seller"}</p>
+                <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>{activeConversation.listing?.title || "Listing"}</p>
+              </div>
             </div>
 
-            <div ref={chatWindowRef} style={styles.chatWindow}>
-              {messages.map((msg) => (
-                <MessageBubble 
-                  key={msg._id || msg.id} 
-                  msg={msg} 
-                  currentUserId={currentUserId} 
-                />
-              ))}
+            <div ref={chatWindowRef} style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "12px", backgroundColor: "#f7f9fc" }}>
+              {messages.length === 0 ? (
+                <p style={{ textAlign: "center", color: "#999", fontSize: "13px", marginTop: "40px" }}>No messages yet. Say hello!</p>
+              ) : (
+                messages.map((msg) => {
+                  const isMe = msg.senderId === user?.id;
+                  return (
+                    <div key={msg.id} style={{ display: "flex", justifyContent: isMe ? "flex-end" : "flex-start" }}>
+                      <div style={{ maxWidth: "75%", padding: "10px 14px", borderRadius: isMe ? "12px 12px 0 12px" : "12px 12px 12px 0", backgroundColor: isMe ? "#1e3a8a" : "#fff", color: isMe ? "#fff" : "#333", fontSize: "13px", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
+                        {msg.body}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
 
-            <form onSubmit={handleSendMessage} style={styles.fieldGroup}>
-              <input 
-                type="text" 
-                value={newMessage} 
-                onChange={(e) => setNewMessage(e.target.value)} 
-                placeholder="Type a message..." 
-                style={inputStyle}
+            <div style={{ padding: "12px", borderTop: "1px solid #eee", display: "flex", gap: "8px", alignItems: "center" }}>
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSendMessage(e)}
+                placeholder="Type a message..."
+                style={{ flex: 1, padding: "10px 14px", borderRadius: "24px", border: "1px solid #e0e0e0", fontSize: "13px", outline: "none", fontFamily: "Poppins, sans-serif" }}
               />
-              <button type="submit" style={styles.sendBtn}>➤</button>
-            </form>
+              <button
+                onClick={handleSendMessage}
+                style={{ backgroundColor: "#1e3a8a", color: "#fff", border: "none", borderRadius: "50%", width: "40px", height: "40px", cursor: "pointer", fontSize: "16px" }}
+              >➤</button>
+            </div>
           </div>
         )}
-
       </div>
+      <Footer />
     </div>
   );
 }
-
-const InboxItem = ({ item, onSelect }) => (
-  <div onClick={() => onSelect(item)} style={styles.inboxItem}>
-    <div style={avatarStyle}></div>
-    <div style={styles.inboxDetails}>
-      <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#333' }}>{item.recipientName || "Seller"}</div>
-      <div style={{ fontSize: '11px', color: '#777' }}>{item.listingTitle || "Product Listing"}</div>
-      <div style={styles.lastMessage}>{item.lastMessage?.text || "Click to view chat"}</div>
-    </div>
-  </div>
-);
-
-const ProductCard = ({ listing }) => (
-  <div style={styles.productCard}>
-    <img 
-      src={listing?.image || "https://via.placeholder.com/60"} 
-      alt="product" 
-      style={styles.productImg} 
-    />
-    <div style={styles.productDetails}>
-      <div style={{ fontSize: '12px', color: '#333', fontWeight: '500' }}>{listing?.title || "Organic Chemistry Textbook - 2nd Edition"}</div>
-      <div style={styles.productPrice}>₦{listing?.price || "5,000"}</div>
-      <div style={styles.productLocation}>📍 {listing?.location || "Alaba Market, Ojo, Lagos"}</div>
-    </div>
-  </div>
-);
-
-const MessageBubble = ({ msg, currentUserId }) => {
-  const isMe = msg.senderId === currentUserId;
-  return (
-    <div style={{ ...styles.messageRow, justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
-      <div style={{ 
-        ...styles.bubble, 
-        backgroundColor: isMe ? '#800020' : '#F5F5F5', 
-        color: isMe ? '#fff' : '#333',
-        borderRadius: isMe ? '12px 12px 0px 12px' : '12px 12px 12px 0px'
-      }}>
-        {msg.text}
-      </div>
-    </div>
-  );
-};
-
-const styles = {
-  container: { display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '10px', backgroundColor: '#f1f1f1', fontFamily: 'Poppins, sans-serif' },
-  card: { width: '100%', maxWidth: '375px', height: '600px', borderRadius: '16px', backgroundColor: '#fff', boxShadow: '0 4px 16px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', overflow: 'hidden' },
-  listContainer: { height: '530px', overflowY: 'auto' },
-  inboxItem: { display: 'flex', alignItems: 'center', padding: '12px', borderBottom: '1px solid #f5f5f5', cursor: 'pointer', gap: '12px' },
-  inboxDetails: { display: 'flex', flexDirection: 'column', flexGrow: 1 },
-  lastMessage: { fontSize: '12px', color: '#888', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '220px' },
-  chatViewContainer: { display: 'flex', flexDirection: 'column', height: '100%' },
-  sellerHeader: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' },
-  backBtn: { background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '0 4px' },
-  productCard: { display: 'flex', gap: '12px', padding: '8px', border: '1px solid #eee', borderRadius: '8px', backgroundColor: '#fafafa' },
-  productImg: { width: '55px', height: '55px', objectFit: 'cover', borderRadius: '6px' },
-  productDetails: { display: 'flex', flexDirection: 'column', justifyContent: 'center' },
-  productPrice: { fontSize: '13px', fontWeight: 'bold', color: '#000', margin: '2px 0' },
-  productLocation: { fontSize: '10px', color: '#666' },
-  chatWindow: { height: '320px', overflowY: 'auto', padding: '15px', backgroundColor: '#f7f9fc', display: 'flex', flexDirection: 'column', gap: '12px' },
-  messageRow: { display: 'flex', width: '100%' },
-  bubble: { maxWidth: '80%', padding: '10px 14px', fontSize: '13px', lineHeight: '1.4', wordBreak: 'break-word', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' },
-  fieldGroup: { display: 'flex', padding: '12px', backgroundColor: '#fff', borderTop: '1px solid #eee', gap: '8px', alignItems: 'center', marginTop: 'auto' },
-  sendBtn: { backgroundColor: '#800020', color: '#fff', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '14px' }
-};
 
 export default Conversations;

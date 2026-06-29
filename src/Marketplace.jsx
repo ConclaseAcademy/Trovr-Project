@@ -1,77 +1,49 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getListings } from "./api";
+import { getListings, startConversation } from "./api";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import CtaBanner from "./CTABanner"; 
+import CtaBanner from "./CTABanner";
 import useStore from "./store";
 
 const categories = ["All", "Education", "Sport", "Electronics", "Furniture", "Fashion"];
-
-const fallbackProducts = [
-  {
-    _id: "1",
-    title: "Organic Chemistry Textbook",
-    price: "N9K",
-    condition: "Used",
-    description: "Second Edition, minimal highlighting. Good condition. Used for CHEM 201.",
-    location: "Ife Main Hostel, Burger Spot, Ite Junction",
-    category: "Education",
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=200&fit=crop",
-    sellerName: "Wealth Happiness"
-  },
-  {
-    _id: "2",
-    title: "Gaming Mouse Logitech G502",
-    price: "N100K",
-    condition: "New",
-    description: "High precision gaming mouse with programmable buttons.",
-    location: "Okonkwo Junction",
-    category: "Electronics",
-    image: "https://images.unsplash.com/photo-1527814050087-3793815479db?w=300&h=200&fit=crop",
-    sellerName: "Chidi Tech"
-  },
-  {
-    _id: "3",
-    title: "Desk Lamp With USB Port",
-    price: "N36K",
-    condition: "Used",
-    description: "LED desk lamp with adjustable brightness and USB charging port.",
-    location: "Adekunle Hostel, Aisha Road",
-    category: "Furniture",
-    image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=300&h=200&fit=crop",
-    sellerName: "Emeka Stores"
-  },
-];
 
 function Marketplace() {
   const navigate = useNavigate();
   const { user } = useStore();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
-  const [listings, setListings] = useState(fallbackProducts);
-  const [selectedItem, setSelectedItem] = useState(null); 
+  const [listings, setListings] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     getListings()
-      .then((data) => {
-        const result = data.data || data.listings || data;
-        setListings(Array.isArray(result) && result.length > 0 ? result : fallbackProducts);
+      .then((response) => {
+      setListings(response.data.data.listings);
+        
       })
-      .catch(() => {
-        setListings(fallbackProducts);
+      .catch((error) => {
+        const errorMsg = error?.response?.data?.message || "Unable to load listings";
+        toast.error(errorMsg);
       });
   }, []);
 
   const handleMessageSeller = (product) => {
     if (user) {
-      navigate("/conversations");
+      startConversation({ listingId: product.id,message: "Hi, I'm interested in your listing?" })
+        .then(() => {
+          navigate("/conversations");
+        })
+        .catch((error) => {
+          const errorMsg = error?.response?.data?.message || "Failed to start conversation";
+          toast.error(errorMsg);
+        });
+
     } else {
-      setSelectedItem(null); 
+      setSelectedItem(null);
       toast.info("Please log in to message the seller");
-      const loginBtn = document.querySelector("nav button:last-child");
-      if (loginBtn) loginBtn.click();
+      
     }
   };
 
@@ -81,7 +53,7 @@ function Marketplace() {
     return matchCategory && matchSearch;
   });
 
-  return ( 
+  return (
     <div style={styles.page}>
       <Navbar />
       <div style={styles.container}>
@@ -113,60 +85,66 @@ function Marketplace() {
 
         <p style={styles.resultCount}>{filtered.length} Items Found</p>
 
-        <div style={styles.grid}>
-          {filtered.map((product) => (
-            <div 
-              key={product._id} 
-              style={{ ...styles.card, cursor: "pointer" }}
-              onClick={() => setSelectedItem(product)} 
-            >
-              <img
-                src={typeof product.image === "string" ? product.image : product.image?.[0]}
-                alt={product.title || product.name}
-                style={styles.cardImg}
-              />
-              <div style={styles.cardBody}>
-                <div style={styles.cardTop}>
-                  <span style={styles.cardName}>{product.title || product.name}</span>
-                  <span style={styles.cardPrice}>{product.price}</span>
+        {listings.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "80px 20px" }}>
+            <div style={{ fontSize: "48px", marginBottom: "16px", opacity: 0.4 }}>🛍️</div>
+            <p style={{ fontSize: "16px", fontWeight: "600", color: "#555" }}>No listings available yet</p>
+            <p style={{ fontSize: "13px", color: "#999" }}>Check back soon or create the first listing!</p>
+          </div>
+        ) : (
+          <div style={styles.grid}>
+            {filtered.map((product) => (
+              <div
+                key={product.id}
+                style={{ ...styles.card, cursor: "pointer" }}
+                onClick={() => setSelectedItem(product)}
+              >
+                <img
+                  src={product.images?.[0]?.imageUrl || "https://via.placeholder.com/300"}
+                  alt={product.title || product.name}
+                  style={styles.cardImg}
+                />
+                <div style={styles.cardBody}>
+                  <div style={styles.cardTop}>
+                    <span style={styles.cardName}>{product.title || product.name}</span>
+                    <span style={styles.cardPrice}>{product.price}</span>
+                  </div>
+                  <span style={{
+                    ...styles.conditionBadge,
+                    backgroundColor: product.condition === "New" ? "#dcfce7" : "#fef9c3",
+                    color: product.condition === "New" ? "#16a34a" : "#ca8a04",
+                  }}>
+                    {product.condition}
+                  </span>
+                  <p style={styles.cardDesc}>{product.description}</p>
+                  <p style={styles.cardLocation}>📍 {product.location}</p>
+                  <button
+                    style={styles.msgBtn}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedItem(product);
+                    }}
+                  >
+                    View Details
+                  </button>
                 </div>
-                <span style={{
-                  ...styles.conditionBadge,
-                  backgroundColor: product.condition === "New" ? "#dcfce7" : "#fef9c3",
-                  color: product.condition === "New" ? "#16a34a" : "#ca8a04",
-                }}>
-                  {product.condition}
-                </span>
-                <p style={styles.cardDesc}>{product.description}</p>
-                <p style={styles.cardLocation}>📍 {product.location}</p>
-                
-                <button 
-                  style={styles.msgBtn} 
-                  onClick={(e) => {
-                    e.stopPropagation(); 
-                    setSelectedItem(product);
-                  }}
-                >
-                  View Details
-                </button>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {selectedItem && (
           <div style={styles.overlay} onClick={() => setSelectedItem(null)}>
             <div style={styles.modalCard} onClick={(e) => e.stopPropagation()}>
-              
               <div style={styles.headerRow}>
                 <h3 style={styles.modalTitle}>{selectedItem.title || selectedItem.name}</h3>
                 <button style={styles.closeX} onClick={() => setSelectedItem(null)}>✕</button>
               </div>
 
-              <img 
-                src={typeof selectedItem.image === "string" ? selectedItem.image : selectedItem.image?.[0]} 
-                alt={selectedItem.title || selectedItem.name} 
-                style={styles.modalImg} 
+              <img
+                src={selectedItem.images?.[0]?.imageUrl || "https://via.placeholder.com/300"}
+                alt={selectedItem.title || selectedItem.name}
+                style={styles.modalImg}
               />
 
               <div style={styles.detailsContainer}>
@@ -186,7 +164,6 @@ function Marketplace() {
                 <p style={styles.descriptionText}>{selectedItem.description}</p>
                 <p style={styles.modalLocation}>📍 {selectedItem.location}</p>
 
-                
                 <div style={styles.sellerBar}>
                   <div style={styles.sellerInfo}>
                     <div style={styles.avatarMini}>
@@ -195,24 +172,22 @@ function Marketplace() {
                     <div>
                       <div style={{ fontSize: "10px", color: "#999" }}>Seller</div>
                       <div style={{ fontSize: "13px", fontWeight: "600", color: "#333" }}>
-                        {selectedItem.sellerName || "Wealth Happiness"}
+                        {selectedItem.sellerName || "Anonymous"}
                       </div>
                     </div>
                   </div>
-
-                  <button 
-                    style={styles.modalMsgBtn} 
+                  <button
+                    style={styles.modalMsgBtn}
                     onClick={() => handleMessageSeller(selectedItem)}
                   >
                     💬 Message Seller
                   </button>
                 </div>
               </div>
-
             </div>
           </div>
         )}
-        
+
         <CtaBanner />
       </div>
       <Footer />
@@ -239,8 +214,7 @@ const styles = {
   cardDesc: { fontSize: "12px", color: "#666", marginBottom: "6px", flexGrow: 1 },
   cardLocation: { fontSize: "11px", color: "#999", marginBottom: "10px" },
   msgBtn: { width: "100%", padding: "8px", backgroundColor: "#f0f0f0", color: "#333", border: "none", borderRadius: "6px", fontSize: "13px", fontWeight: "600", cursor: "pointer", marginTop: "auto" },
-
-  overlay: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0, 0, 0, 0.5)", backdropFilter: "blur(4px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000, padding: "16px" },
+  overlay: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000, padding: "16px" },
   modalCard: { backgroundColor: "#fff", width: "100%", maxWidth: "400px", borderRadius: "16px", overflow: "hidden", boxShadow: "0 10px 25px rgba(0,0,0,0.15)" },
   headerRow: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", borderBottom: "1px solid #eee" },
   modalTitle: { margin: 0, fontSize: "16px", fontWeight: "600", color: "#333" },
