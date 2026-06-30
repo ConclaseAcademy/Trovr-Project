@@ -1,10 +1,13 @@
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useStore from "./store";
+import { getUnreadCount } from "./api";
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useStore();
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const handleLogout = () => {
     logout();
@@ -12,6 +15,16 @@ function Navbar() {
   };
 
   const isActive = (path) => location.pathname === path;
+
+  useEffect(() => {
+    if (!user) return;
+
+    getUnreadCount()
+      .then((response) => {
+        setUnreadCount(response.data.unreadCount);
+      })
+      .catch(() => {});
+  }, [user]);
 
   return (
     <nav style={styles.nav}>
@@ -22,7 +35,12 @@ function Navbar() {
             <button style={isActive("/Marketplace") ? styles.activeBtn : styles.ghostBtn} onClick={() => navigate("/Marketplace")}>Browse Listing</button>
             <button style={isActive("/dashboard") ? styles.activeBtn : styles.ghostBtn} onClick={() => navigate("/dashboard")}>My Listing</button>
             <button style={isActive("/create-listing")? styles.activeBtn : styles.ghostBtn} onClick={() => navigate("/create-listing")}>+ Create Listing</button>
-            <button style={isActive("/conversations")? styles.activeBtn : styles.iconBtn}onClick={() => navigate("/conversations")}>💬</button>
+
+            <div style={{ position: "relative", display: "inline-block" }}>
+              <button style={isActive("/conversations")? styles.activeBtn : styles.iconBtn} onClick={() => navigate("/conversations")}>💬</button>
+              {unreadCount > 0 && <span style={styles.unreadDot} />}
+            </div>
+
             <button style={styles.ghostBtn} onClick={handleLogout}>Logout</button>
           </>
         ) : (
@@ -58,10 +76,15 @@ const styles = {
     color: "#1e3a8a", cursor: "pointer", fontSize: "14px", fontWeight: "600",
   },
   iconBtn: {
-  width: "38px", height: "38px", borderRadius: "50%",
-  border: "1.5px solid #1e3a8a", background: "transparent",
-    color: "#1e3a8a", cursor: "pointer", fontSize: "16px", 
-},
+    width: "38px", height: "38px", borderRadius: "50%",
+    border: "1.5px solid #1e3a8a", background: "transparent",
+    color: "#1e3a8a", cursor: "pointer", fontSize: "16px",
+  },
+  unreadDot: {
+    position: "absolute", top: "-2px", right: "-2px",
+    width: "10px", height: "10px", borderRadius: "50%",
+    backgroundColor: "#ef4444", border: "2px solid white",
+  },
 };
 
 export default Navbar;
