@@ -5,18 +5,23 @@ const features = [
   { icon: LayoutGrid, title: "Clean Listing", desc: "Providing beautiful, category-sorted, organised listings that are easier to browse than WhatsApp groups." },
   { icon: Smartphone, title: "Mobile First", desc: "Designing modern, organised listings that are easier to browse for how students naturally use their phones everyday." },
 ];
- 
 
-  
 function WhyChoose() {
   return (
     <section style={styles.section}>
+      <style>{`
+        @media (max-width: 640px) {
+          .why-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
+
       <h2 style={styles.title}>
         Why <span style={styles.green}>students trust</span><br /> Trovr?
       </h2>
-     
 
-      <div style={styles.grid}>
+      <div className="why-grid" style={styles.grid}>
         {features.map((item, i) => (
           <div key={i} style={styles.card}>
             <div style={styles.icon}><item.icon size={32}/></div>

@@ -8,6 +8,7 @@ function Navbar() {
   const location = useLocation();
   const { user, logout } = useStore();
   const [unreadCount, setUnreadCount] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -15,6 +16,11 @@ function Navbar() {
   };
 
   const isActive = (path) => location.pathname === path;
+
+  const go = (path) => {
+    navigate(path);
+    setMenuOpen(false);
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -28,16 +34,49 @@ function Navbar() {
 
   return (
     <nav style={styles.nav}>
-      <span style={styles.logo} onClick={() => navigate("/Marketplace")}>Trovr</span>
-      <div style={styles.navBtns}>
+      <style>{`
+        .navbar-links { display: flex; gap: 12px; align-items: center; }
+        .navbar-hamburger { display: none; }
+        @media (max-width: 768px) {
+          .navbar-links {
+            display: none;
+            position: absolute;
+            top: 64px;
+            left: 0;
+            right: 0;
+            flex-direction: column;
+            align-items: stretch;
+            background: white;
+            padding: 16px 20px;
+            gap: 10px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+          }
+          .navbar-links.open { display: flex; }
+          .navbar-links button { width: 100%; }
+          .navbar-hamburger { display: block; }
+        }
+      `}</style>
+
+      <span style={styles.logo} onClick={() => go("/Marketplace")}>Trovr</span>
+
+      <button
+        className="navbar-hamburger"
+        style={styles.hamburgerBtn}
+        onClick={() => setMenuOpen((open) => !open)}
+        aria-label="Toggle menu"
+      >
+        {menuOpen ? "✕" : "☰"}
+      </button>
+
+      <div className={`navbar-links${menuOpen ? " open" : ""}`}>
         {user ? (
           <>
-            <button style={isActive("/Marketplace") ? styles.activeBtn : styles.ghostBtn} onClick={() => navigate("/Marketplace")}>Browse Listing</button>
-            <button style={isActive("/dashboard") ? styles.activeBtn : styles.ghostBtn} onClick={() => navigate("/dashboard")}>My Listing</button>
-            <button style={isActive("/create-listing")? styles.activeBtn : styles.ghostBtn} onClick={() => navigate("/create-listing")}>+ Create Listing</button>
+            <button style={isActive("/Marketplace") ? styles.activeBtn : styles.ghostBtn} onClick={() => go("/Marketplace")}>Browse Listing</button>
+            <button style={isActive("/dashboard") ? styles.activeBtn : styles.ghostBtn} onClick={() => go("/dashboard")}>My Listing</button>
+            <button style={isActive("/create-listing") ? styles.activeBtn : styles.ghostBtn} onClick={() => go("/create-listing")}>+ Create Listing</button>
 
             <div style={{ position: "relative", display: "inline-block" }}>
-              <button style={isActive("/conversations")? styles.activeBtn : styles.iconBtn} onClick={() => navigate("/conversations")}>💬</button>
+              <button style={isActive("/conversations") ? styles.activeBtn : styles.iconBtn} onClick={() => go("/conversations")}>💬 Messages</button>
               {unreadCount > 0 && <span style={styles.unreadDot} />}
             </div>
 
@@ -45,8 +84,8 @@ function Navbar() {
           </>
         ) : (
           <>
-            <button style={styles.ghostBtn} onClick={() => navigate("/signup")}>Sign-up</button>
-            <button style={styles.activeBtn} onClick={() => navigate("/login")}>Login</button>
+            <button style={styles.ghostBtn} onClick={() => go("/signup")}>Sign-up</button>
+            <button style={styles.activeBtn} onClick={() => go("/login")}>Login</button>
           </>
         )}
       </div>
@@ -64,7 +103,10 @@ const styles = {
     boxShadow: "0 1px 12px rgba(0,0,0,0.08)",
   },
   logo: { color: "#1e3a8a", fontWeight: "800", fontSize: "22px", cursor: "pointer" },
-  navBtns: { display: "flex", gap: "12px", alignItems: "center" },
+  hamburgerBtn: {
+    border: "none", background: "transparent",
+    fontSize: "24px", color: "#1e3a8a", cursor: "pointer",
+  },
   activeBtn: {
     padding: "9px 22px", borderRadius: "22px",
     border: "none", background: "#1e3a8a",
@@ -76,9 +118,9 @@ const styles = {
     color: "#1e3a8a", cursor: "pointer", fontSize: "14px", fontWeight: "600",
   },
   iconBtn: {
-    width: "38px", height: "38px", borderRadius: "50%",
+    padding: "9px 22px", borderRadius: "22px",
     border: "1.5px solid #1e3a8a", background: "transparent",
-    color: "#1e3a8a", cursor: "pointer", fontSize: "16px",
+    color: "#1e3a8a", cursor: "pointer", fontSize: "14px", fontWeight: "600",
   },
   unreadDot: {
     position: "absolute", top: "-2px", right: "-2px",
