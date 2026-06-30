@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getListings, startConversation } from "./api";
 import Navbar from "./Navbar";
@@ -7,7 +7,7 @@ import Footer from "./Footer";
 import CtaBanner from "./CTABanner";
 import useStore from "./store";
 
-const categories = ["All", "Education", "Sport", "Electronics", "Furniture", "Fashion"];
+const categories = ["All", "EDUCATION", "SPORT", "ELECTRONICS", "FURNITURE", "FASHION"];
 
 function Marketplace() {
   const navigate = useNavigate();
@@ -20,8 +20,9 @@ function Marketplace() {
   useEffect(() => {
     getListings()
       .then((response) => {
-      setListings(response.data.data.listings);
-        
+      const data = response.data.data.listings;
+        console.log("All categories:", data.map(l => l.category));
+        setListings(data);
       })
       .catch((error) => {
         const errorMsg = error?.response?.data?.message || "Unable to load listings";
@@ -48,7 +49,8 @@ function Marketplace() {
   };
 
   const filtered = listings.filter((p) => {
-    const matchCategory = activeCategory === "All" || p.category === activeCategory;
+    const matchCategory = activeCategory === "All" 
+    || p.category?.toUpperCase() === activeCategory.toUpperCase();
     const matchSearch = (p.title || p.name || "").toLowerCase().includes(search.toLowerCase());
     return matchCategory && matchSearch;
   });
