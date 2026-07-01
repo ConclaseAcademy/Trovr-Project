@@ -37,6 +37,7 @@ function CreateListing({ listingToEdit }) {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('');
+  const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
@@ -46,18 +47,19 @@ function CreateListing({ listingToEdit }) {
     setTitle('');
     setPrice('');
     setCategory('');
+    setLocation('');
     setDescription('');
     setImageFile(null);
     setImagePreview('');
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-
   useEffect(() => {
     if (listingToEdit) {
       setTitle(listingToEdit.title || '');
       setPrice(listingToEdit.price || '');
       setCategory(listingToEdit.category || '');
+      setLocation(listingToEdit.location || '');
       setDescription(listingToEdit.description || '');
       if (listingToEdit.image?.[0]) {
         setImagePreview(listingToEdit.image[0]);
@@ -66,14 +68,12 @@ function CreateListing({ listingToEdit }) {
       }
       return;
     }
-
     resetForm();
   }, [listingToEdit]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
   };
@@ -103,6 +103,7 @@ function CreateListing({ listingToEdit }) {
     formData.append('title', title);
     formData.append('price', Number(price));
     formData.append('category', category.toUpperCase());
+    formData.append('location', location);
     formData.append('description', description);
     if (imageFile) {
       formData.append('images', imageFile);
@@ -173,6 +174,17 @@ function CreateListing({ listingToEdit }) {
                   <option value="SPORT">Sport</option>
                 </select>
               </div>
+            </div>
+
+            <div>
+              <label style={labelStyle}>Location *</label>
+              <input
+                value={location}
+                onChange={e => setLocation(e.target.value)}
+                placeholder="e.g. Block C Hostel, Main Campus"
+                style={inputStyle}
+                required
+              />
             </div>
 
             <div>

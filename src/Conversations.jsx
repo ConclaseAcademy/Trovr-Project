@@ -69,8 +69,15 @@ function Conversations() {
       .catch(() => toast.error("Failed to send message"));
   };
 
+  const getOtherUser = (item) => {
+    if (item.sellerId === user?.id) {
+      return item.buyer;   // I'm the seller → show buyer
+    }
+    return item.seller || null;  // I'm the buyer → show seller
+  };
+
   const getRoleLabel = (item) => {
-    return item.listing?.sellerId === user?.id ? "Buyer inquiry" : "Re: your message";
+    return item.sellerId === user?.id ? "Buyer inquiry" : "Re: your message";
   };
 
   return (
@@ -95,14 +102,14 @@ function Conversations() {
                     onClick={() => setActiveConversation(item)}
                     style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: "12px", padding: "16px", display: "flex", alignItems: "center", gap: "12px", cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
                   >
-                    <div style={{ width: "40px", height: "40px", borderRadius: "50%", backgroundColor: getAvatarColor(item.otherUser?.id), color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", fontSize: "16px", flexShrink: 0 }}>
-                      {item.otherUser?.name?.[0]?.toUpperCase() || "U"}
+                    <div style={{ width: "40px", height: "40px", borderRadius: "50%", backgroundColor: getAvatarColor(getOtherUser(item)?.id), color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", fontSize: "16px", flexShrink: 0 }}>
+                      {getOtherUser(item)?.fullName?.[0]?.toUpperCase() || "U"}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <p style={{ margin: 0, fontWeight: "600", fontSize: "14px", color: "#333" }}>{item.otherUser?.name || "Unknown User"}</p>
+                      <p style={{ margin: 0, fontWeight: "600", fontSize: "14px", color: "#333" }}>{getOtherUser(item)?.fullName || "Unknown User"}</p>
                       <p style={{ margin: 0, fontSize: "11px", color: "#1e3a8a", fontWeight: "500" }}>{getRoleLabel(item)}</p>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>{item.listing?.title || "Listing"}</p>
-                      <p style={{ margin: 0, fontSize: "12px", color: "#888", marginTop: "4px" }}>{item.lastMessage?.body || "Click to view chat"}</p>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>{item.Listing?.title || "Listing"}</p>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#888", marginTop: "4px" }}>{item.lastMessagePreview || "Click to view chat"}</p>
                     </div>
                   </div>
                 ))}
@@ -116,13 +123,13 @@ function Conversations() {
                 onClick={() => { setActiveConversation(null); setMessages([]); }}
                 style={{ background: "none", border: "none", fontSize: "18px", cursor: "pointer", color: "#333" }}
               >←</button>
-              <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: getAvatarColor(activeConversation.otherUser?.id), color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold" }}>
-                {activeConversation.otherUser?.name?.[0]?.toUpperCase() || "U"}
+              <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: getAvatarColor(getOtherUser(activeConversation)?.id), color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold" }}>
+                {getOtherUser(activeConversation)?.fullName?.[0]?.toUpperCase() || "U"}
               </div>
               <div>
-                <p style={{ margin: 0, fontWeight: "600", fontSize: "14px", color: "#333" }}>{activeConversation.otherUser?.name || "Unknown User"}</p>
+                <p style={{ margin: 0, fontWeight: "600", fontSize: "14px", color: "#333" }}>{getOtherUser(activeConversation)?.fullName || "Unknown User"}</p>
                 <p style={{ margin: 0, fontSize: "11px", color: "#1e3a8a", fontWeight: "500" }}>{getRoleLabel(activeConversation)}</p>
-                <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>{activeConversation.listing?.title || "Listing"}</p>
+                <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>{activeConversation.Listing?.title || "Listing"}</p>
               </div>
             </div>
 
