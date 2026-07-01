@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyListings, deleteListing } from "./api";
+import { getMyListings, deleteListing, markAsSold } from "./api";
 import { toast } from "react-toastify";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -123,8 +123,8 @@ function Dashboard() {
                 <p style={{ margin: 0, fontSize: "13px", color: "#444", lineHeight: "1.5" }}>{selectedItem.description || "No description provided."}</p>
               </div>
 
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid #eee", paddingTop: "12px" }}>
-                <div style={{ display: "flex", gap: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid #eee", paddingTop: "12px", flexWrap: "wrap", gap: "8px" }}>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                   <button
                     onClick={() => navigate("/create-listing", { state: { listing: selectedItem } })}
                     style={{ backgroundColor: "#1e3a8a", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
@@ -144,6 +144,20 @@ function Dashboard() {
                     style={{ backgroundColor: "#ef4444", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
                   >
                     Delete
+                  </button>
+                  <button
+                    onClick={() => {
+                      markAsSold(selectedItem.id)
+                        .then(() => {
+                          toast.success("Listing marked as sold");
+                          setListings(listings.filter(l => l.id !== selectedItem.id));
+                          setSelectedItem(null);
+                        })
+                        .catch(() => toast.error("Failed to mark as sold"));
+                    }}
+                    style={{ backgroundColor: "#f59e0b", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+                  >
+                    Sold Out
                   </button>
                   <button
                     onClick={() => setSelectedItem(null)}
