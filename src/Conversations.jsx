@@ -42,14 +42,18 @@ function Conversations() {
 
   useEffect(() => {
     if (!activeConversation) return;
-    getMessages(activeConversation.id)
-      .then((response) => {
-        setMessages(response.data.data);
-      })
-      .catch((error) => {
-        const errorMsg = error?.response?.data?.message || "Failed to load messages";
-        toast.error(errorMsg);
-      });
+
+    const fetchMessages = () => {
+      getMessages(activeConversation.id)
+        .then((response) => {
+          setMessages(response.data.data);
+        })
+        .catch(() => {});
+      };
+
+    fetchMessages();
+    const interval = setInterval(fetchMessages, 2000);
+    return () => clearInterval(interval);
   }, [activeConversation]);
 
   useEffect(() => {
@@ -131,6 +135,21 @@ function Conversations() {
                 <p style={{ margin: 0, fontSize: "11px", color: "#1e3a8a", fontWeight: "500" }}>{getRoleLabel(activeConversation)}</p>
                 <p style={{ margin: 0, fontSize: "12px", color: "#999" }}>{activeConversation.Listing?.title || "Listing"}</p>
               </div>
+            </div>
+
+          <div style={{ backgroundColor: "#fffbeb",
+          border: "1px solid #f59e0b",
+          borderRadius: "10px",
+          padding: "12px 16px",
+          margin: "12px 16px 0",
+          }}>
+            <p style={{ margin: "0 0 8px", 
+            fontWeight: "600",
+            color: "#d97706",
+            fontSize: "13px",}}>Safety Notice</p>
+            <p style={{ margin: "0 0 4px", fontSize: "12px", color: "#92400e" }}>Meet in public campus locations only</p>
+            <p style={{ margin: "0 0 4px", fontSize: "12px", color: "#92400e" }}> Inspect items before making payment</p>
+            <p style={{ margin: "0", fontSize: "12px", color: "#92400e" }}>Trovr does not process payments - all transactions are between buyers and sellers</p> 
             </div>
 
             <div ref={chatWindowRef} style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "12px", backgroundColor: "#f7f9fc" }}>
