@@ -24,6 +24,13 @@ const labelStyle = {
   fontWeight: '500',
 };
 
+const hintStyle = {
+  fontSize: '11px',
+  color: '#aaa',
+  marginTop: '4px',
+  textAlign: 'right',
+};
+
 const rowStyle = {
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
@@ -155,13 +162,14 @@ function CreateListing({ listingToEdit }) {
             
             <div>
               <label style={labelStyle}>Item Name *</label>
-              <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Organic Chemistry Textbook" style={inputStyle} required />
+              <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Organic Chemistry Textbook" style={inputStyle} maxLength={80} required />
+              <p style= {hintStyle}>{title.length}/80</p>
             </div>
 
             <div style={rowStyle}>
               <div>
                 <label style={labelStyle}>Price (₦) *</label>
-                <input value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g. 9000" style={inputStyle} required />
+                <input value={price} onChange={e => setPrice(e.target.value.replace(/[^0-9]/g, ''))} inputMode="numeric" placeholder="e.g. 9000" style={inputStyle} required />
               </div>
               <div>
                 <label style={labelStyle}>Category *</label>
@@ -195,8 +203,10 @@ function CreateListing({ listingToEdit }) {
                 placeholder="Describe your item..."
                 rows={3}
                 style={{ ...inputStyle, resize: 'vertical' }}
+                maxLength={500}
                 required
               />
+              <p style= {hintStyle}>{description.length}/500</p>
             </div>
 
             <div>
