@@ -119,7 +119,7 @@ function Marketplace() {
                     {product.condition}
                   </span>
                   <p style={styles.cardDesc}>{product.description}</p>
-                  <p style={styles.cardLocation}>📍 {product.location}</p>
+                  <p style={styles.cardLocation}>📍 {product.locationName}</p>
                   <button
                     style={styles.msgBtn}
                     onClick={(e) => {
@@ -164,17 +164,17 @@ function Marketplace() {
 
                 <h4 style={styles.sectionLabel}>Description</h4>
                 <p style={styles.descriptionText}>{selectedItem.description}</p>
-                <p style={styles.modalLocation}>📍 {selectedItem.location}</p>
+                <p style={styles.modalLocation}>📍 {selectedItem.locationName}</p>
 
                 <div style={styles.sellerBar}>
                   <div style={styles.sellerInfo}>
                     <div style={styles.avatarMini}>
-                      {selectedItem.sellerName ? selectedItem.sellerName[0].toUpperCase() : "S"}
+                      {selectedItem.seller?.fullName ? selectedItem.seller.fullName[0].toUpperCase() : "S"}
                     </div>
                     <div>
                       <div style={{ fontSize: "10px", color: "#999" }}>Seller</div>
                       <div style={{ fontSize: "13px", fontWeight: "600", color: "#333" }}>
-                        {selectedItem.sellerName || "Anonymous"}
+                        {selectedItem.seller?.fullName || "Anonymous"}
                       </div>
                     </div>
                   </div>

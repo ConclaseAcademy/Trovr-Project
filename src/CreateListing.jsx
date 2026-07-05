@@ -109,8 +109,8 @@ function CreateListing({ listingToEdit }) {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('price', Number(price));
-    formData.append('category', category.toUpperCase());
-    formData.append('location', location);
+    formData.append('category', category);
+    formData.append('locationName', location);
     formData.append('description', description);
     if (imageFile) {
       formData.append('images', imageFile);
