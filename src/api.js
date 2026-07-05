@@ -7,14 +7,13 @@ export const getListings = () => axios.get(`${API_URL}/listings`);
 
 export const createListing = async (formData) => {
   const token = localStorage.getItem("token");
- console.log("token:",token)
   const response = await axios.post(
     `${API_URL}/listings`, 
     formData,             
     {
       headers: {
         Authorization: `Bearer ${token}`,
-       
+       'Content-Type': 'multipart/form-data',
       },
     }
   );
