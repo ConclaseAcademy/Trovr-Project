@@ -37,6 +37,13 @@ const rowStyle = {
   gap: '16px',
 };
 
+// Formats a raw digit string like "100000" into "100,000" for display
+const formatPriceDisplay = (value) => {
+  const digitsOnly = String(value).replace(/[^0-9]/g, '');
+  if (!digitsOnly) return '';
+  return Number(digitsOnly).toLocaleString('en-US');
+};
+
 function CreateListing({ listingToEdit }) {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
@@ -64,7 +71,7 @@ function CreateListing({ listingToEdit }) {
   useEffect(() => {
     if (listingToEdit) {
       setTitle(listingToEdit.title || '');
-      setPrice(listingToEdit.price || '');
+      setPrice(listingToEdit.price ? String(listingToEdit.price) : '');
       setCategory(listingToEdit.category || '');
       setLocation(listingToEdit.location || '');
       setDescription(listingToEdit.description || '');
@@ -169,7 +176,14 @@ function CreateListing({ listingToEdit }) {
             <div style={rowStyle}>
               <div>
                 <label style={labelStyle}>Price (₦) *</label>
-                <input value={price} onChange={e => setPrice(e.target.value.replace(/[^0-9]/g, ''))} inputMode="numeric" placeholder="e.g. 9000" style={inputStyle} required />
+                <input
+                  value={formatPriceDisplay(price)}
+                  onChange={e => setPrice(e.target.value.replace(/[^0-9]/g, ''))}
+                  inputMode="numeric"
+                  placeholder="e.g. 100,000"
+                  style={inputStyle}
+                  required
+                />
               </div>
               <div>
                 <label style={labelStyle}>Category *</label>

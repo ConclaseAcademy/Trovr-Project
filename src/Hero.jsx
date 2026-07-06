@@ -6,22 +6,22 @@ function Hero() {
   return (
     <section style={styles.hero}>
       <h1 style={styles.title}>
-        <span style={styles.green}>Trovr</span> 
+        <span style={styles.green}>Trovr</span>
       </h1>
-      <p style={styles.sub}>
-       "No Ghost Buyers. No Scam Sellers. <br /> 
-        Just People Who Actually Show Up."
+      <p style={styles.tagline}>The campus marketplace for university students</p>
+      <p className="hero-sub" style={styles.sub}>
+        "No Ghost Buyers. No Scam Sellers. Just People Who Actually Show Up."
       </p>
       <div style={styles.btns}>
         <button
           style={styles.browseBtn}
-          onClick={() => navigate("/marketplace")}  
+          onClick={() => navigate("/marketplace")}
         >
           Browse Listing
         </button>
         <button
           style={styles.listBtn}
-          onClick={() => navigate("/create-listing")}  
+          onClick={() => navigate("/create-listing")}
         >
           Get started
         </button>
@@ -33,7 +33,7 @@ function Hero() {
 const styles = {
   hero: {
     textAlign: "center",
-    padding: "100px 32px 80px",
+    padding: "80px 32px 80px",
     backgroundColor: "#f0f4ee",
   },
   title: {
@@ -41,20 +41,30 @@ const styles = {
     fontWeight: "800",
     color: "#111",
     lineHeight: 1.15,
-    marginBottom: "20px",
+    marginBottom: "8px",
     fontFamily: "Georgia, serif",
     letterSpacing: "-1px",
   },
   green: {
     color: "#4caf7d",
   },
+  tagline: {
+    fontSize: "26px",
+    fontWeight: "400",
+    fontStyle: "italic",
+    fontFamily: "Georgia, 'Times New Roman', serif",
+    color: "#4caf7d",
+    marginBottom: "24px",
+    letterSpacing: "0.3px",
+  },
   sub: {
     color: "#555",
     fontSize: "20px",
     marginBottom: "40px",
     lineHeight: 1.7,
-    maxWidth: "520px",
+    maxWidth: "700px",
     margin: "0 auto 40px",
+    whiteSpace: "nowrap",
   },
   btns: {
     display: "flex",
