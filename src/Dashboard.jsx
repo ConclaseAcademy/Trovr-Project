@@ -5,27 +5,30 @@ import { toast } from "react-toastify";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
+const formatPrice = (value) => {
+  const num = Number(value);
+  if (Number.isNaN(num)) return value;
+  return num.toLocaleString('en-US');
+};
+
 function Dashboard() {
   const navigate = useNavigate();
   const [listings, setListings] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
+    setError(null);
     getMyListings()
       .then((response) => {
         setListings(response.data.data);
-        console.log(response);
       })
       .catch((error) => {
         const errorMsg = error?.response?.data?.message || "Unable to load your listings";
         toast.error(errorMsg);
-        console.log(error);
+        setError(errorMsg);
       });
   }, []);
-
-  if (loading) return <p style={{ textAlign: "center", marginTop: 40, fontFamily: "Poppins, sans-serif" }}>Loading...</p>;
 
   if (error) return (
     <div style={{ backgroundColor: "#f9f9f9", minHeight: "100vh", fontFamily: "Poppins, sans-serif" }}>
@@ -81,7 +84,7 @@ function Dashboard() {
                 />
                 <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: "6px" }}>
                   <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "600", color: "#333" }}>{item.title}</h4>
-                  <p style={{ margin: 0, fontSize: "14px", fontWeight: "700", color: "#1e3a8a" }}>₦{item.price}</p>
+                  <p style={{ margin: 0, fontSize: "14px", fontWeight: "700", color: "#1e3a8a" }}>₦{formatPrice(item.price)}</p>
                   <span style={{ fontSize: "11px", padding: "2px 8px", borderRadius: "10px", display: "inline-block", alignSelf: "flex-start", backgroundColor: "#dcfce7", color: "#16a34a" }}>
                     {item.category}
                   </span>
@@ -114,7 +117,7 @@ function Dashboard() {
 
             <div style={{ padding: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "20px", fontWeight: "700", color: "#000" }}>₦{selectedItem.price}</span>
+                <span style={{ fontSize: "20px", fontWeight: "700", color: "#000" }}>₦{formatPrice(selectedItem.price)}</span>
                 <span style={{ fontSize: "11px", padding: "2px 8px", borderRadius: "10px", backgroundColor: "#dcfce7", color: "#16a34a" }}>{selectedItem.category}</span>
               </div>
 
@@ -132,7 +135,9 @@ function Dashboard() {
                     Edit
                   </button>
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!window.confirm("Delete this listing? This can't be undone.")) return;
                       deleteListing(selectedItem.id)
                         .then(() => {
                           toast.success("Listing deleted");
@@ -147,6 +152,7 @@ function Dashboard() {
                   </button>
                   <button
                     onClick={() => {
+                      if (!window.confirm("Mark this listing as sold?")) return;
                       markAsSold(selectedItem.id)
                         .then(() => {
                           toast.success("Listing marked as sold");

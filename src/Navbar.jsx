@@ -25,12 +25,24 @@ function Navbar() {
   useEffect(() => {
     if (!user) return;
 
-    getUnreadCount()
-      .then((response) => {
-        setUnreadCount(response.data.unreadCount);
-      })
-      .catch(() => {});
-  }, [user]);
+    const fetchUnreadCount = () => {
+      getUnreadCount()
+        .then((response) => {
+          setUnreadCount(response.data.unreadCount);
+        })
+        .catch(() => {});
+    };
+
+    // Fetch immediately (covers first mount, and refetches whenever the
+    // route changes — importantly right after leaving /conversations,
+    // where messages just got marked as read)
+    fetchUnreadCount();
+
+    // Also poll periodically so the badge updates even if the user
+    // stays on the same page and a new message comes in
+    const interval = setInterval(fetchUnreadCount, 15000);
+    return () => clearInterval(interval);
+  }, [user, location.pathname]);
 
   return (
     <nav style={styles.nav}>
@@ -77,7 +89,11 @@ function Navbar() {
 
             <div style={{ position: "relative", display: "inline-block" }}>
               <button style={isActive("/conversations") ? styles.activeBtn : styles.iconBtn} onClick={() => go("/conversations")}>💬 Messages</button>
-              {unreadCount > 0 && <span style={styles.unreadDot} />}
+              {unreadCount > 0 && (
+                <span style={styles.unreadBadge}>
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
             </div>
 
             <button style={styles.ghostBtn} onClick={handleLogout}>Logout</button>
@@ -122,10 +138,13 @@ const styles = {
     border: "1.5px solid #1e3a8a", background: "transparent",
     color: "#1e3a8a", cursor: "pointer", fontSize: "14px", fontWeight: "600",
   },
-  unreadDot: {
-    position: "absolute", top: "-2px", right: "-2px",
-    width: "10px", height: "10px", borderRadius: "50%",
+  unreadBadge: {
+    position: "absolute", top: "-6px", right: "-6px",
+    minWidth: "18px", height: "18px", borderRadius: "50%",
     backgroundColor: "#ef4444", border: "2px solid white",
+    color: "white", fontSize: "10px", fontWeight: "700",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    padding: "0 3px", lineHeight: 1,
   },
 };
 
