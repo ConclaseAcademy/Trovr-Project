@@ -5,6 +5,14 @@ function Hero() {
 
   return (
     <section style={styles.hero}>
+      <style>{`
+        @media (max-width: 768px) {
+          .hero-sub {
+            white-space: normal !important;
+            max-width: 90% !important;
+          }
+        }
+      `}</style>
       <h1 style={styles.title}>
         <span style={styles.green}>Trovr</span>
       </h1>
