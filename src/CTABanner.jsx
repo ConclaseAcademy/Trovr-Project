@@ -12,7 +12,7 @@ const styles = {
   section: {
     backgroundColor: "#fefde8",
     textAlign: "center",
-    padding: "100px 40px",
+    padding: "56px 40px",  
   },
   title: {
     fontSize: "44px",
