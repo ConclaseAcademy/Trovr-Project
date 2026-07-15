@@ -9,6 +9,14 @@ import useStore from "./store";
 
 const categories = ["All", "EDUCATION", "SPORT", "ELECTRONICS", "FURNITURE", "FASHION"];
 
+const formatPrice = (price) => {
+  const number = Number(price) || 0;
+  return `₦${number.toLocaleString("en-NG", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+};
+
 function Marketplace() {
   const navigate = useNavigate();
   const { user } = useStore();
@@ -109,7 +117,7 @@ function Marketplace() {
                 <div style={styles.cardBody}>
                   <div style={styles.cardTop}>
                     <span style={styles.cardName}>{product.title || product.name}</span>
-                    <span style={styles.cardPrice}>{product.price}</span>
+                    <span style={styles.cardPrice}>{formatPrice(product.price)}</span>
                   </div>
                   <span style={{
                     ...styles.conditionBadge,
@@ -151,7 +159,7 @@ function Marketplace() {
 
               <div style={styles.detailsContainer}>
                 <div style={styles.priceRow}>
-                  <span style={styles.price}>{selectedItem.price}</span>
+                  <span style={styles.price}>{formatPrice(selectedItem.price)}</span>
                   <span style={{
                     ...styles.conditionBadge,
                     backgroundColor: selectedItem.condition === "New" ? "#dcfce7" : "#fef9c3",
